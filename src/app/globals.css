@@ -21,6 +21,27 @@
   --background: var(--ivory);
   --foreground: var(--ink);
 
+  /* Type scale — intentional only. Prefer these over arbitrary sizes. */
+  --text-xs: 0.75rem; /* 12 — captions, legal */
+  --text-sm: 0.875rem; /* 14 — secondary, UI */
+  --text-base: 1rem; /* 16 — body (mobile floor) */
+  --text-md: 1.125rem; /* 18 — lead body */
+  --text-lg: 1.25rem; /* 20 — emphasized body */
+  --text-xl: 1.5rem; /* 24 — subheads */
+  --text-2xl: 1.875rem; /* 30 — section (mobile) */
+  --text-3xl: 2.5rem; /* 40 — section (desktop) */
+  --text-display: clamp(2.25rem, 6.5vw, 4.25rem); /* hero */
+  --leading-tight: 1.08;
+  --leading-snug: 1.25;
+  --leading-body: 1.65;
+  --measure: 34rem;
+  --measure-wide: 40rem;
+
+  /* Vertical rhythm (homepage / editorial) */
+  --space-section: 5rem;
+  --space-section-md: 7rem;
+  --space-section-lg: 9rem;
+
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 180ms;
@@ -30,6 +51,14 @@
   --arrow-shift: 4px;
   --press-y: 1px;
   --press-scale: 0.985;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --space-section: 7rem;
+    --space-section-md: 8.5rem;
+    --space-section-lg: 10rem;
+  }
 }
 
 @theme inline {
@@ -188,26 +217,147 @@ body {
   margin-top: 1.5rem;
 }
 
-/* Mobile type scale — desktop upgrades */
-.headline-xl {
-  font-size: clamp(1.875rem, 7vw, 4.5rem);
+/* ——— Type system (use these; avoid one-off rem sizes) ——— */
+.type-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+  color: var(--ink);
 }
 
-/* Section rhythm: shorter on mobile */
+.type-section {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+@media (min-width: 768px) {
+  .type-section {
+    font-size: var(--text-3xl);
+    line-height: 1.1;
+  }
+}
+
+.type-title {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-xl);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+
+@media (min-width: 768px) {
+  .type-title {
+    font-size: 1.75rem;
+  }
+}
+
+.type-lead {
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+  letter-spacing: -0.015em;
+  color: var(--stone);
+  max-width: var(--measure);
+}
+
+@media (min-width: 768px) {
+  .type-lead {
+    font-size: var(--text-lg);
+  }
+}
+
+.type-body {
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  letter-spacing: -0.011em;
+  color: var(--stone);
+  max-width: var(--measure);
+}
+
+.type-small {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--stone);
+  max-width: var(--measure);
+}
+
+.type-caption {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--stone);
+}
+
+/* Legacy alias */
+.headline-xl {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+/* Section rhythm */
 .section-pad {
-  padding-block: 3.5rem;
+  padding-block: var(--space-section);
 }
 
 @media (min-width: 768px) {
   .section-pad {
-    padding-block: 5.5rem;
+    padding-block: var(--space-section-md);
   }
 }
 
 @media (min-width: 1024px) {
   .section-pad {
-    padding-block: 7rem;
+    padding-block: var(--space-section-lg);
   }
+}
+
+/* FFF signature: index + label (editorial, not SaaS badge) */
+.section-index {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+  font-variant-numeric: tabular-nums;
+}
+
+.section-index::before {
+  content: "";
+  display: inline-block;
+  width: 1.25rem;
+  height: 1px;
+  background: var(--forest);
+  vertical-align: middle;
+  transform: translateY(-0.2em);
+}
+
+/* Quiet horizontal rule with forest origin — brand motif */
+.fff-rule {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--forest) 0,
+    var(--forest) 2rem,
+    var(--border) 2rem,
+    var(--border) 100%
+  );
+  margin: 0;
 }
 
 /* Sticky header offset with safe area */
@@ -216,7 +366,11 @@ body {
 }
 
 .prose-measure {
-  max-width: 38rem;
+  max-width: var(--measure);
+}
+
+.prose-measure-wide {
+  max-width: var(--measure-wide);
 }
 
 /* ——— Focus (never compete with hover) ——— */
@@ -810,19 +964,11 @@ input[type="checkbox"]:active {
 
 .eyebrow {
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--stone);
-}
-
-.headline-xl {
-  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.038em;
-  line-height: 1.08;
-  text-wrap: balance;
 }
 
 .rule {

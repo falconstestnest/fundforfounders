@@ -70,47 +70,41 @@ export function fieldGroupFor(type: StakeholderType): FieldGroup {
   return "common";
 }
 
-/** Homepage stakeholder cards → preselected form types */
+/** Homepage network rows → preselected journey types */
 export const HOMEPAGE_CARDS = [
   {
     title: "Founders",
-    description:
-      "Build something the world needs. Apply to join the early pipeline.",
+    description: "Early pipeline for ambitious builders.",
     type: "Founder" as StakeholderType,
     href: "/join?type=Founder",
   },
   {
     title: "Investors",
-    description:
-      "Discover curated startups, pitch sessions and network opportunities.",
+    description: "Angels and HNIs. Curated access, not noise.",
     type: "Angel Investor" as StakeholderType,
     href: "/join?type=Angel%20Investor",
   },
   {
     title: "Limited Partners",
-    description:
-      "Follow the formation of a future founder-first investment platform.",
+    description: "Interest in a founder-first platform under formation.",
     type: "Limited Partner" as StakeholderType,
     href: "/join?type=Limited%20Partner",
   },
   {
-    title: "Global VCs",
-    description:
-      "Access regional founders, emerging sectors and partnership opportunities.",
+    title: "Venture funds",
+    description: "Regional deal flow and co-invest dialogue.",
     type: "Venture Capital Fund" as StakeholderType,
     href: "/join?type=Venture%20Capital%20Fund",
   },
   {
-    title: "Government and Institutions",
-    description:
-      "Partner on ecosystem building, events and regional startup missions.",
+    title: "Institutions",
+    description: "Government and public partners on ecosystem work.",
     type: "Government Agency" as StakeholderType,
     href: "/join?type=Government%20Agency",
   },
   {
-    title: "Funds of Funds",
-    description:
-      "Register institutional interest in an emerging investment manager.",
+    title: "Funds of funds",
+    description: "Institutional interest in an emerging manager.",
     type: "Fund of Funds" as StakeholderType,
     href: "/join?type=Fund%20of%20Funds",
   },

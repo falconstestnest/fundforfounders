@@ -43,24 +43,24 @@ export function Header() {
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="container-site flex h-12 items-center justify-between sm:h-14 md:h-[4.25rem]">
+      <div className="container-site flex h-12 items-center justify-between sm:h-14 md:h-16">
         <Link
           href="/"
-          className="logo-mark focus-ring text-[0.9375rem] text-ink"
+          className="logo-mark focus-ring text-sm text-ink md:text-[0.9375rem]"
           onClick={() => setOpen(false)}
         >
           Fund<span>For</span>Founders
         </Link>
 
         <nav
-          className="hidden items-center gap-8 lg:flex"
+          className="hidden items-center gap-10 lg:flex"
           aria-label="Primary"
         >
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`nav-link focus-ring text-[0.8125rem] font-medium ${
+              className={`nav-link focus-ring text-sm font-medium ${
                 isActive(link.href) ? "nav-link-active" : ""
               }`}
               aria-current={isActive(link.href) ? "page" : undefined}
@@ -73,7 +73,7 @@ export function Header() {
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/join"
-            className="btn-primary focus-ring !min-h-11 !px-4 !text-[0.8125rem] sm:!min-h-10 sm:!px-4"
+            className="btn-primary focus-ring !min-h-10 !px-4 !text-sm sm:!min-h-9"
           >
             Join
           </Link>

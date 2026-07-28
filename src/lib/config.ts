@@ -30,12 +30,12 @@ export const siteConfig = {
     "FundForFounders is currently under development. Nothing on this website constitutes an offer, solicitation, investment recommendation or commitment to invest.",
 } as const;
 
+/** Minimal primary nav — Join is the header CTA */
 export const navLinks = [
   { href: "/thesis", label: "Thesis" },
-  { href: "/podcast", label: "Podcast" },
   { href: "/founders", label: "Founders" },
   { href: "/investors", label: "Investors" },
-  { href: "/join", label: "Join" },
+  { href: "/podcast", label: "Podcast" },
 ] as const;
 
 export const mobileNavLinks = [
