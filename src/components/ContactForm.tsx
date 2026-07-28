@@ -115,12 +115,12 @@ export function ContactForm() {
           &nbsp;
         </p>
       </div>
-      <label className="flex items-start gap-3 text-sm text-stone">
+      <label className="flex min-h-12 items-start gap-3 text-sm text-stone">
         <input
           type="checkbox"
           name="consent"
           required
-          className="mt-1 h-4 w-4 rounded border-border accent-forest"
+          className="mt-0.5 h-5 w-5 shrink-0 rounded border-border accent-forest"
         />
         <span>
           I agree to the{" "}
@@ -137,7 +137,7 @@ export function ContactForm() {
       )}
       <button
         type="submit"
-        className={`btn-primary focus-ring ${status === "loading" ? "is-loading" : ""}`}
+        className={`btn-primary focus-ring min-h-12 w-full sm:w-auto ${status === "loading" ? "is-loading" : ""}`}
         disabled={status === "loading"}
       >
         {status === "loading" ? (

@@ -75,7 +75,7 @@ const digitalTopics = [
 
 export default function ThesisPage() {
   return (
-    <div className="pt-20 lg:pt-24">
+    <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-[calc(4.25rem+env(safe-area-inset-top))]">
       <section className="section-pad !pb-12">
         <div className="container-site">
           <p className="eyebrow">Our Thesis</p>
@@ -274,7 +274,7 @@ export default function ThesisPage() {
                   href={siteConfig.digitalRupee.faqUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary focus-ring !min-h-11 !px-5 !text-sm"
+                  className="btn-primary focus-ring min-h-12 w-full px-5 text-sm sm:w-auto"
                 >
                   RBI Digital Rupee FAQs
                   <span aria-hidden>↗</span>
@@ -283,7 +283,7 @@ export default function ThesisPage() {
                   href={siteConfig.digitalRupee.conceptNoteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary focus-ring !min-h-11 !px-5 !text-sm"
+                  className="btn-secondary focus-ring min-h-12 w-full px-5 text-sm sm:w-auto"
                 >
                   RBI CBDC concept note (PDF)
                   <span aria-hidden>↗</span>
@@ -309,7 +309,10 @@ export default function ThesisPage() {
               Join the network as a founder, investor or institution.
             </p>
           </div>
-          <Link href="/join" className="btn-primary focus-ring">
+          <Link
+            href="/join"
+            className="btn-primary focus-ring min-h-12 w-full sm:w-auto"
+          >
             Join the Network
           </Link>
         </div>

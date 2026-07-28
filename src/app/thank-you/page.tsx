@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Thank You",
+  title: "Thank you",
   robots: { index: false, follow: false },
 };
 
@@ -15,12 +15,12 @@ export default async function ThankYouPage({ searchParams }: Props) {
   const isContact = from === "contact";
 
   return (
-    <div className="pt-20 lg:pt-24">
-      <section className="section-pad">
-        <div className="success-panel container-site max-w-2xl text-center">
-          <div className="success-check mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-forest">
+    <div className="min-h-[100svh] pt-[calc(3.5rem+env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <section className="px-4 py-10 sm:py-16">
+        <div className="success-panel mx-auto max-w-md text-left sm:text-center">
+          <div className="success-check mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-forest sm:mx-auto">
             <svg
-              className="h-7 w-7 text-ivory"
+              className="h-6 w-6 text-ivory"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -34,23 +34,53 @@ export default async function ThankYouPage({ searchParams }: Props) {
               />
             </svg>
           </div>
-          <p className="eyebrow justify-center">Received</p>
-          <h1 className="font-display mt-4 text-4xl tracking-tight md:text-5xl">
-            {isContact ? "Message received." : "Thank you for registering."}
+          <p className="eyebrow">{isContact ? "Contact" : "Partners"}</p>
+          <h1 className="mt-3 text-[1.625rem] font-medium leading-snug tracking-tight text-ink sm:text-3xl">
+            {isContact ? "Message received." : "Your interest is with us."}
           </h1>
-          <p className="mx-auto mt-6 max-w-lg text-lg text-stone">
+          <p className="mt-4 text-[0.9375rem] leading-relaxed text-stone">
             {isContact
               ? "We will respond if a follow-up is appropriate."
-              : "We will share relevant launch updates and opportunities based on how you asked to participate."}
+              : "We treat partnership interest with care. When there is something relevant to your seat — not a mass blast — we will be in touch."}
           </p>
-          <p className="mx-auto mt-4 max-w-lg text-sm text-stone">
-            This is not an offer to invest or a commitment of capital.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/" className="btn-primary focus-ring">
+          {!isContact && (
+            <>
+              <p className="mt-4 text-sm leading-relaxed text-stone">
+                This is not an offer, solicitation, or commitment to invest.
+              </p>
+              <ul className="mt-8 space-y-2 rounded-xl border border-border bg-paper p-4 text-left text-sm text-stone">
+                <li className="flex gap-2">
+                  <span className="text-forest" aria-hidden>
+                    ·
+                  </span>
+                  Profile recorded against your partner path
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-forest" aria-hidden>
+                    ·
+                  </span>
+                  Follow-up only when the fit is real
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-forest" aria-hidden>
+                    ·
+                  </span>
+                  No generic newsletter behaviour
+                </li>
+              </ul>
+            </>
+          )}
+          <div className="mt-10 flex flex-col gap-3 sm:items-center">
+            <Link
+              href="/"
+              className="btn-primary focus-ring min-h-12 w-full sm:w-auto"
+            >
               Back to home
             </Link>
-            <Link href="/thesis" className="btn-secondary focus-ring">
+            <Link
+              href="/thesis"
+              className="btn-secondary focus-ring min-h-12 w-full sm:w-auto"
+            >
               Read our thesis
             </Link>
           </div>

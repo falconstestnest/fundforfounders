@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FadeIn } from "@/components/FadeIn";
-import RegistrationForm from "@/components/forms/RegistrationForm";
 import { HOMEPAGE_CARDS } from "@/lib/stakeholders";
 import { siteConfig } from "@/lib/config";
 
@@ -15,25 +14,34 @@ const direction = [
 export default function HomePage() {
   return (
     <>
-      {/* Hero — one idea, one primary action */}
-      <section className="relative flex min-h-[88svh] items-end pb-20 pt-28 md:min-h-[92svh] md:items-center md:pb-28 md:pt-24">
+      {/* Hero — mobile-first: readable type, full-width CTAs */}
+      <section className="relative flex min-h-[min(92svh,900px)] items-end pb-12 pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pb-16 md:min-h-[88svh] md:items-center md:pb-24 md:pt-28">
         <div className="container-site relative z-10 w-full">
           <p className="eyebrow">Launching soon</p>
-          <h1 className="headline-xl mt-5 max-w-[11em] text-[2.5rem] text-ink sm:text-5xl md:text-6xl lg:text-[4.5rem] lg:leading-[1.02]">
+          <h1 className="headline-xl mt-4 max-w-[12em] text-ink">
             Finding founders before the world sees their potential.
           </h1>
-          <p className="prose-measure mt-7 text-[1.0625rem] leading-[1.65] text-stone md:text-lg">
+          <p className="prose-measure mt-5 text-[0.9375rem] leading-[1.65] text-stone sm:mt-7 sm:text-base md:text-lg">
             A founder-first investment network connecting ambitious builders
             with serious capital and long-term partners.
           </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
-            <Link href="/join" className="btn-primary focus-ring">
-              Join the network
+          <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-5">
+            <Link
+              href="/join?type=Founder"
+              className="btn-primary focus-ring min-h-12 w-full sm:w-auto"
+            >
+              Apply as a founder
             </Link>
-            <Link href="/thesis" className="link-arrow focus-ring">
-              Read our thesis <span className="card-arrow" aria-hidden>→</span>
+            <Link
+              href="/join"
+              className="btn-secondary focus-ring min-h-12 w-full sm:w-auto"
+            >
+              Partner with us
             </Link>
           </div>
+          <Link href="/thesis" className="link-arrow focus-ring mt-5 text-sm">
+            Read our thesis <span className="card-arrow" aria-hidden>→</span>
+          </Link>
         </div>
       </section>
 
@@ -217,29 +225,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Registration — single conversion block */}
-      <section
-        id="register"
-        className="border-t border-border section-pad"
-      >
-        <div className="container-site grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
-            <FadeIn>
-              <p className="eyebrow">Participate</p>
-              <h2 className="mt-4 text-2xl font-medium tracking-tight md:text-3xl">
-                Be part of what comes next.
-              </h2>
-              <p className="prose-measure mt-5 text-sm leading-relaxed text-stone md:text-base">
-                Tell us how you want to take part. We will share relevant
-                updates — applications, sessions, and partnerships.
-              </p>
-            </FadeIn>
-          </div>
-          <div className="lg:col-span-8">
-            <FadeIn delay={40}>
-              <RegistrationForm onSuccessRedirect />
-            </FadeIn>
-          </div>
+      {/* Conversion — send people into the journey, not a wall of fields */}
+      <section id="register" className="border-t border-border">
+        <div className="container-site py-14 sm:py-20 md:py-28">
+          <FadeIn>
+            <p className="eyebrow">Participate</p>
+            <h2 className="mt-3 max-w-lg text-2xl font-medium tracking-tight text-ink sm:text-3xl">
+              Be part of what comes next.
+            </h2>
+            <p className="prose-measure mt-4 text-[0.9375rem] leading-relaxed text-stone">
+              Founders apply through a short conversation. Partners register
+              through a path built for their seat — not a newsletter signup.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <Link
+                href="/join?type=Founder"
+                className="btn-primary focus-ring min-h-12 w-full sm:w-auto"
+              >
+                Start founder application
+              </Link>
+              <Link
+                href="/join"
+                className="btn-secondary focus-ring min-h-12 w-full sm:w-auto"
+              >
+                Partner interest
+              </Link>
+            </div>
+          </FadeIn>
         </div>
       </section>
     </>

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="pt-20 lg:pt-24">
+    <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-[calc(4.25rem+env(safe-area-inset-top))]">
       <section className="section-pad">
         <div className="container-site max-w-xl text-center">
           <p className="eyebrow">404</p>

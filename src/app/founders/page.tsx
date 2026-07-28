@@ -56,26 +56,29 @@ const faqs = [
 
 export default function FoundersPage() {
   return (
-    <div className="pt-20 lg:pt-24">
-      <section className="section-pad !pb-12">
+    <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-[calc(4.25rem+env(safe-area-inset-top))]">
+      <section className="section-pad !pb-10">
         <div className="container-site">
           <p className="eyebrow">For Founders</p>
-          <h1 className="font-display mt-4 max-w-4xl text-4xl leading-[1.05] tracking-tight md:text-6xl">
+          <h1 className="mt-4 max-w-[14ch] text-[1.875rem] font-medium leading-[1.1] tracking-tight text-ink sm:text-4xl md:text-5xl lg:text-6xl">
             Build something the world needs.
           </h1>
-          <p className="prose-measure mt-6 text-lg text-stone md:text-xl">
+          <p className="prose-measure mt-5 text-[0.9375rem] leading-relaxed text-stone sm:mt-6 sm:text-lg md:text-xl">
             FundForFounders is creating an early pipeline for ambitious founders
             — with clarity before any cheque, and a long-term partnership mindset
             after alignment.
           </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
             <Link
               href="/join?type=Founder"
-              className="btn-primary focus-ring"
+              className="btn-primary focus-ring min-h-12 w-full sm:w-auto"
             >
-              Apply as a Founder
+              Start your application
             </Link>
-            <Link href="/thesis" className="btn-secondary focus-ring">
+            <Link
+              href="/thesis"
+              className="btn-secondary focus-ring min-h-12 w-full sm:w-auto"
+            >
               Read our thesis
             </Link>
           </div>
@@ -152,7 +155,7 @@ export default function FoundersPage() {
             </p>
             <Link
               href="/join?type=Founder"
-              className="btn-primary focus-ring mt-8"
+              className="btn-primary focus-ring mt-8 min-h-12 w-full sm:w-auto"
             >
               Apply as a Founder
             </Link>

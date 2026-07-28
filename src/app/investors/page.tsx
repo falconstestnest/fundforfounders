@@ -6,8 +6,46 @@ import { siteConfig } from "@/lib/config";
 export const metadata: Metadata = {
   title: "For Investors",
   description:
-    "Register interest in the FundForFounders investor network — angels, LPs, family offices, VCs and institutional partners.",
+    "Partner with FundForFounders — angels, VCs, LPs, family offices, funds of funds, government and corporate partners.",
 };
+
+const paths = [
+  {
+    type: "Angel Investor",
+    title: "Angel / HNI",
+    body: "Early cheques, co-invest, pitch panels. Curated opportunities — not a newsletter.",
+  },
+  {
+    type: "Venture Capital Fund",
+    title: "Venture capital",
+    body: "Deal flow, co-invest dialogue, and regional access where the fit is real.",
+  },
+  {
+    type: "Limited Partner",
+    title: "Limited partner",
+    body: "Expression of institutional interest only. No solicitation. No commitment implied.",
+  },
+  {
+    type: "Family Office",
+    title: "Family office",
+    body: "Direct and fund exposure with a long horizon. Confidential dialogue.",
+  },
+  {
+    type: "Fund of Funds",
+    title: "Fund of funds",
+    body: "Emerging manager and platform review when materials are ready.",
+  },
+  {
+    type: "Government Agency",
+    title: "Government",
+    body: "Mission-aligned programmes, events, and ecosystem partnerships.",
+  },
+  {
+    type: "Corporate Innovation Team",
+    title: "Corporate",
+    body: "Innovation mandates, pilots, and founder access that match your priorities.",
+  },
+];
 
 const reasons = [
   {
@@ -38,31 +76,30 @@ const reasons = [
 
 export default function InvestorsPage() {
   return (
-    <div className="pt-20 lg:pt-24">
-      <section className="section-pad !pb-12">
+    <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-[calc(4.25rem+env(safe-area-inset-top))]">
+      <section className="section-pad !pb-10">
         <div className="container-site">
-          <p className="eyebrow">For Investors</p>
-          <h1 className="font-display mt-4 max-w-4xl text-4xl leading-[1.05] tracking-tight md:text-6xl">
-            Join a network built for serious capital.
+          <p className="eyebrow">For partners</p>
+          <h1 className="mt-4 max-w-[16ch] text-[1.875rem] font-medium leading-[1.1] tracking-tight text-ink sm:text-4xl md:text-5xl lg:text-6xl">
+            Future partners — not subscribers.
           </h1>
-          <p className="prose-measure mt-6 text-lg text-stone md:text-xl">
-            Angels, HNIs, family offices, LPs, VCs, funds of funds and
-            international investors can register interest, receive updates and
-            explore future participation — subject to eligibility and
-            documentation.
+          <p className="prose-measure mt-5 text-[0.9375rem] leading-relaxed text-stone sm:mt-6 sm:text-lg md:text-xl">
+            Angels, family offices, LPs, VCs, funds of funds, government and
+            corporate teams each follow a path built for their seat. We collect
+            what matters — and nothing that does not.
           </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
             <Link
-              href="/join?type=Angel%20Investor"
-              className="btn-primary focus-ring"
+              href="/join"
+              className="btn-primary focus-ring min-h-12 w-full sm:w-auto"
             >
-              Join the Investor Network
+              Choose your path
             </Link>
             <Link
-              href="/join?type=Limited%20Partner"
-              className="btn-secondary focus-ring"
+              href="/thesis"
+              className="btn-secondary focus-ring min-h-12 w-full sm:w-auto"
             >
-              Express LP Interest
+              Read our thesis
             </Link>
           </div>
         </div>
@@ -71,16 +108,62 @@ export default function InvestorsPage() {
       <section className="section-pad border-t border-border bg-paper/50">
         <div className="container-site">
           <FadeIn>
-            <h2 className="font-display text-3xl tracking-tight md:text-4xl">
-              Why join the network
+            <p className="eyebrow">Your seat</p>
+            <h2 className="mt-3 max-w-xl text-2xl font-medium tracking-tight text-ink md:text-3xl">
+              A premium path for every partner type.
+            </h2>
+            <p className="prose-measure mt-3 text-sm leading-relaxed text-stone">
+              The form adapts. Intelligent questions. Meaningful information.
+              Less noise.
+            </p>
+          </FadeIn>
+          <ul className="mt-10 divide-y divide-border border-t border-border">
+            {paths.map((p, i) => (
+              <li key={p.type}>
+                <FadeIn delay={Math.min(i * 30, 120)}>
+                  <Link
+                    href={`/join?type=${encodeURIComponent(p.type)}`}
+                    className="network-row group focus-ring flex flex-col gap-2 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:py-6"
+                  >
+                    <div className="min-w-0">
+                      <h3 className="text-base font-medium tracking-tight text-ink sm:text-lg">
+                        {p.title}
+                      </h3>
+                      <p className="mt-1 max-w-xl text-sm leading-relaxed text-stone">
+                        {p.body}
+                      </p>
+                    </div>
+                    <span
+                      className="card-arrow shrink-0 text-stone"
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  </Link>
+                </FadeIn>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="section-pad border-t border-border">
+        <div className="container-site">
+          <FadeIn>
+            <h2 className="text-2xl font-medium tracking-tight md:text-3xl">
+              Why partner with the network
             </h2>
           </FadeIn>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {reasons.map((r, i) => (
               <FadeIn key={r.title} delay={i * 40}>
-                <article className="panel-static h-full rounded p-6">
-                  <h3 className="font-display text-xl text-ink">{r.title}</h3>
-                  <p className="mt-3 text-sm text-stone">{r.body}</p>
+                <article className="panel-static h-full rounded p-5 sm:p-6">
+                  <h3 className="text-base font-medium tracking-tight text-ink sm:text-lg">
+                    {r.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-stone">
+                    {r.body}
+                  </p>
                 </article>
               </FadeIn>
             ))}
@@ -88,37 +171,29 @@ export default function InvestorsPage() {
         </div>
       </section>
 
-      <section className="section-pad">
+      <section className="section-pad border-t border-border">
         <div className="container-site max-w-3xl">
           <FadeIn>
-            <h2 className="font-display text-3xl tracking-tight">
+            <h2 className="text-2xl font-medium tracking-tight md:text-3xl">
               How we describe participation
             </h2>
-            <p className="mt-5 text-stone">
+            <p className="mt-4 text-[0.9375rem] leading-relaxed text-stone sm:mt-5 sm:text-base">
               We use careful language. You can register interest, join the
               network, receive updates and explore future participation. We do
               not promise returns, assured allocation, risk-free investment or a
               confirmed fund until formal approvals exist.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/join?type=Venture%20Capital%20Fund"
-                className="btn-secondary focus-ring !min-h-11 !text-sm"
-              >
-                Explore Partnership (VCs)
-              </Link>
-              <Link
-                href="/join?type=Fund%20of%20Funds"
-                className="btn-secondary focus-ring !min-h-11 !text-sm"
-              >
-                Register Institutional Interest
-              </Link>
-            </div>
+            <Link
+              href="/join"
+              className="btn-primary focus-ring mt-8 min-h-12 w-full sm:w-auto"
+            >
+              Begin partner registration
+            </Link>
           </FadeIn>
         </div>
       </section>
 
-      <section className="border-t border-border bg-ivory py-12">
+      <section className="border-t border-border bg-ivory py-10 pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:py-12">
         <div className="container-site">
           <p className="max-w-3xl text-sm leading-relaxed text-stone">
             <strong className="text-ink">Disclaimer.</strong>{" "}

@@ -10,15 +10,15 @@ export const metadata: Metadata = {
 
 export default function PodcastPage() {
   return (
-    <div className="pt-20 lg:pt-24">
+    <div className="pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-[calc(4.25rem+env(safe-area-inset-top))]">
       <section className="border-b border-border">
-        <div className="container-site grid gap-12 py-20 md:grid-cols-12 md:gap-10 md:py-28">
+        <div className="container-site grid gap-10 py-14 sm:py-20 md:grid-cols-12 md:gap-10 md:py-28">
           <div className="md:col-span-7">
             <p className="eyebrow">Podcast</p>
-            <h1 className="mt-4 max-w-[14ch] text-3xl font-medium tracking-tight text-ink md:text-5xl md:leading-[1.08]">
+            <h1 className="mt-4 max-w-[14ch] text-[1.75rem] font-medium tracking-tight text-ink sm:text-3xl md:text-5xl md:leading-[1.08]">
               {siteConfig.podcastTitle}
             </h1>
-            <p className="prose-measure mt-6 text-base leading-relaxed text-stone md:text-lg">
+            <p className="prose-measure mt-5 text-[0.9375rem] leading-relaxed text-stone sm:mt-6 sm:text-base md:text-lg">
               Conversations with investors, founders, and ecosystem leaders
               about conviction, risk, and the human decisions behind every
               investment.
@@ -28,7 +28,7 @@ export default function PodcastPage() {
             </p>
             <Link
               href="/join?type=Media"
-              className="btn-primary focus-ring mt-8"
+              className="btn-primary focus-ring mt-8 min-h-12 w-full sm:w-auto"
             >
               Get podcast updates
             </Link>
