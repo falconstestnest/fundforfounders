@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",
+    "@neondatabase/serverless": "^1.1.0",
     "@supabase/supabase-js": "^2.111.0",
     "next": "16.2.12",
     "react": "19.2.4",

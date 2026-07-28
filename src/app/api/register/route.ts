@@ -1,9 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sendRegistrationEmails } from "@/lib/email";
-import { insertLead } from "@/lib/leads";
+import { insertLead, isLeadsStorageConfigured } from "@/lib/leads";
 import { rateLimit } from "@/lib/rate-limit";
 import { parseRegistrationPayload } from "@/lib/registration-schema";
-import { isSupabaseConfigured } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -43,7 +42,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Extra honeypot keys (legacy / bots)
   if (body && typeof body === "object") {
     const b = body as Record<string, unknown>;
     if (
@@ -89,10 +87,8 @@ export async function POST(req: NextRequest) {
     pitchDeckFileName,
   };
 
-  // Persist to Supabase when configured
   const insert = await insertLead(data);
-  if (!insert.ok && isSupabaseConfigured()) {
-    // Hard fail only when Supabase is configured but insert fails
+  if (!insert.ok && isLeadsStorageConfigured()) {
     return NextResponse.json(
       {
         ok: false,

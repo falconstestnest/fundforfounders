@@ -3,7 +3,12 @@ import {
   type StakeholderType,
 } from "./registration-schema";
 import type { RegistrationPayload } from "./email";
-import { getSupabaseAdmin, isSupabaseConfigured, type LeadRow } from "./supabase";
+import { dbInsertLead, isDatabaseConfigured } from "./db";
+import {
+  getSupabaseAdmin,
+  isSupabaseConfigured,
+  type LeadRow,
+} from "./supabase";
 
 const COMMON_KEYS = new Set([
   "fullName",
@@ -49,36 +54,56 @@ export function buildLeadInsert(
     mobile: asOptionalString(data.mobile),
     country: asOptionalString(data.country),
     city: asOptionalString(data.city),
-    organisation: asOptionalString(data.organisation as string | undefined),
-    designation: asOptionalString(data.designation as string | undefined),
-    linkedin: asOptionalString(data.linkedin as string | undefined),
+    organisation: asOptionalString(data.organisation),
+    designation: asOptionalString(data.designation),
+    linkedin: asOptionalString(data.linkedin),
     stakeholder_type: type,
-    how_heard: asOptionalString(data.howHeard as string | undefined),
-    notes: asOptionalString(data.message as string | undefined),
+    how_heard: asOptionalString(data.howHeard),
+    notes: asOptionalString(data.message),
     consent: Boolean(data.consent),
     consent_at: data.consent ? new Date().toISOString() : null,
     consent_version: "1.0",
     details,
     pitch_deck_filename:
       asOptionalString(data.pitchDeckFileName) ||
-      asOptionalString(data.pitchDeckFilename as string | undefined),
+      asOptionalString(data.pitchDeckFilename),
     status: "New" as const,
     priority: high ? ("High" as const) : ("Normal" as const),
     source: "website",
   };
 }
 
+export function isLeadsStorageConfigured(): boolean {
+  return isDatabaseConfigured() || isSupabaseConfigured();
+}
+
 export async function insertLead(
   data: RegistrationPayload & { pitchDeckFileName?: string },
 ): Promise<{ ok: true; lead: LeadRow } | { ok: false; error: string }> {
-  if (!isSupabaseConfigured()) {
-    console.warn("Supabase not configured — skipping lead insert");
-    return { ok: false, error: "supabase_not_configured" };
+  if (!isLeadsStorageConfigured()) {
+    console.warn("No DATABASE_URL or Supabase — skipping lead insert");
+    return { ok: false, error: "storage_not_configured" };
   }
 
+  const row = buildLeadInsert(data);
+
+  // Prefer Neon / Postgres DATABASE_URL
+  if (isDatabaseConfigured()) {
+    try {
+      const lead = await dbInsertLead(row);
+      return { ok: true, lead };
+    } catch (err) {
+      console.error("Neon insert error:", err);
+      return {
+        ok: false,
+        error: err instanceof Error ? err.message : "insert_failed",
+      };
+    }
+  }
+
+  // Fallback: Supabase service role
   try {
     const supabase = getSupabaseAdmin();
-    const row = buildLeadInsert(data);
     const { data: lead, error } = await supabase
       .from("leads")
       .insert(row)

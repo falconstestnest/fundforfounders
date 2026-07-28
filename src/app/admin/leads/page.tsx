@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdminAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
+import { dbListLeads, isDatabaseConfigured } from "@/lib/db";
+import { isLeadsStorageConfigured } from "@/lib/leads";
 import {
   getSupabaseAdmin,
   isSupabaseConfigured,
@@ -16,6 +18,48 @@ type SearchParams = Promise<{
   priority?: string;
   q?: string;
 }>;
+
+async function fetchLeads(filters: {
+  type?: string;
+  status?: string;
+  priority?: string;
+  q?: string;
+}): Promise<{ leads: LeadRow[]; error?: string }> {
+  if (isDatabaseConfigured()) {
+    try {
+      const leads = await dbListLeads({ ...filters, limit: 200 });
+      return { leads };
+    } catch (err) {
+      return {
+        leads: [],
+        error: err instanceof Error ? err.message : "Failed to load leads",
+      };
+    }
+  }
+
+  if (isSupabaseConfigured()) {
+    let query = getSupabaseAdmin()
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    if (filters.type) query = query.eq("stakeholder_type", filters.type);
+    if (filters.status) query = query.eq("status", filters.status);
+    if (filters.priority) query = query.eq("priority", filters.priority);
+    if (filters.q) {
+      query = query.or(
+        `full_name.ilike.%${filters.q}%,email.ilike.%${filters.q}%,organisation.ilike.%${filters.q}%`,
+      );
+    }
+
+    const { data, error } = await query;
+    if (error) return { leads: [], error: error.message };
+    return { leads: (data || []) as LeadRow[] };
+  }
+
+  return { leads: [], error: "No database configured" };
+}
 
 export default async function AdminLeadsPage({
   searchParams,
@@ -38,15 +82,13 @@ export default async function AdminLeadsPage({
     redirect("/admin/login");
   }
 
-  if (!isSupabaseConfigured()) {
+  if (!isLeadsStorageConfigured()) {
     return (
       <div className="mx-auto max-w-lg px-6 py-20">
-        <h1 className="font-display text-2xl text-ink">Supabase not configured</h1>
+        <h1 className="font-display text-2xl text-ink">Database not configured</h1>
         <p className="mt-3 text-stone">
-          Add <code className="text-ink">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-          <code className="text-ink">SUPABASE_SERVICE_ROLE_KEY</code>, then run{" "}
-          <code className="text-ink">supabase/migrations/001_leads.sql</code> in
-          the SQL Editor.
+          Set <code className="text-ink">DATABASE_URL</code> (Neon) or Supabase
+          service keys.
         </p>
         <AdminLogoutButton />
       </div>
@@ -59,32 +101,19 @@ export default async function AdminLeadsPage({
   const priority = params.priority;
   const q = params.q?.trim();
 
-  let query = getSupabaseAdmin()
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(200);
-
-  if (type) query = query.eq("stakeholder_type", type);
-  if (status) query = query.eq("status", status);
-  if (priority) query = query.eq("priority", priority);
-  if (q) {
-    query = query.or(
-      `full_name.ilike.%${q}%,email.ilike.%${q}%,organisation.ilike.%${q}%`,
-    );
-  }
-
-  const { data: leads, error } = await query;
+  const { leads: rows, error } = await fetchLeads({
+    type,
+    status,
+    priority,
+    q,
+  });
 
   if (error) {
     return (
-      <div className="p-10 text-error">
-        Error loading leads: {error.message}
-      </div>
+      <div className="p-10 text-error">Error loading leads: {error}</div>
     );
   }
 
-  const rows = (leads || []) as LeadRow[];
   const exportQuery = new URLSearchParams();
   if (type) exportQuery.set("type", type);
   if (status) exportQuery.set("status", status);
@@ -160,10 +189,7 @@ export default async function AdminLeadsPage({
           >
             Angels
           </FilterChip>
-          <FilterChip
-            href="/admin/leads?status=New"
-            active={status === "New"}
-          >
+          <FilterChip href="/admin/leads?status=New" active={status === "New"}>
             New
           </FilterChip>
           <FilterChip
@@ -194,8 +220,7 @@ export default async function AdminLeadsPage({
                       colSpan={6}
                       className="px-5 py-12 text-center text-stone"
                     >
-                      No leads yet. Submissions will appear here after Supabase
-                      is connected.
+                      No leads yet. Submit a registration on the public form.
                     </td>
                   </tr>
                 )}

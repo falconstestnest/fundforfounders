@@ -1,6 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isAdminRequest } from "@/lib/admin-auth";
+import { dbListLeads, isDatabaseConfigured } from "@/lib/db";
+import { isLeadsStorageConfigured } from "@/lib/leads";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase";
+import type { LeadRow } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -9,43 +12,72 @@ function csvEscape(val: unknown): string {
   return `"${s.replace(/"/g, '""')}"`;
 }
 
+async function fetchAll(filters: {
+  type?: string | null;
+  status?: string | null;
+  priority?: string | null;
+  q?: string | null;
+}): Promise<LeadRow[]> {
+  const f = {
+    type: filters.type || undefined,
+    status: filters.status || undefined,
+    priority: filters.priority || undefined,
+    q: filters.q || undefined,
+    limit: 5000,
+  };
+
+  if (isDatabaseConfigured()) {
+    return dbListLeads(f);
+  }
+
+  if (isSupabaseConfigured()) {
+    let query = getSupabaseAdmin()
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5000);
+
+    if (f.type) query = query.eq("stakeholder_type", f.type);
+    if (f.status) query = query.eq("status", f.status);
+    if (f.priority) query = query.eq("priority", f.priority);
+    if (f.q) {
+      query = query.or(
+        `full_name.ilike.%${f.q}%,email.ilike.%${f.q}%,organisation.ilike.%${f.q}%`,
+      );
+    }
+
+    const { data, error } = await query;
+    if (error || !data) throw new Error(error?.message || "Export failed");
+    return data as LeadRow[];
+  }
+
+  throw new Error("No database configured");
+}
+
 export async function GET(req: NextRequest) {
   if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!isSupabaseConfigured()) {
+  if (!isLeadsStorageConfigured()) {
     return NextResponse.json(
-      { error: "Supabase is not configured" },
+      { error: "Database is not configured" },
       { status: 503 },
     );
   }
 
   const { searchParams } = new URL(req.url);
-  const type = searchParams.get("type");
-  const status = searchParams.get("status");
-  const priority = searchParams.get("priority");
-  const q = searchParams.get("q");
 
-  let query = getSupabaseAdmin()
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(5000);
-
-  if (type) query = query.eq("stakeholder_type", type);
-  if (status) query = query.eq("status", status);
-  if (priority) query = query.eq("priority", priority);
-  if (q) {
-    query = query.or(
-      `full_name.ilike.%${q}%,email.ilike.%${q}%,organisation.ilike.%${q}%`,
-    );
-  }
-
-  const { data, error } = await query;
-
-  if (error || !data) {
-    console.error("Export failed", error);
+  let data: LeadRow[];
+  try {
+    data = await fetchAll({
+      type: searchParams.get("type"),
+      status: searchParams.get("status"),
+      priority: searchParams.get("priority"),
+      q: searchParams.get("q"),
+    });
+  } catch (err) {
+    console.error("Export failed", err);
     return NextResponse.json({ error: "Export failed" }, { status: 500 });
   }
 
