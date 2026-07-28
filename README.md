@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FundForFounders
 
-## Getting Started
+Pre-launch institutional landing page and stakeholder registration platform.
 
-First, run the development server:
+> Finding founders before the world sees their potential.
+
+## Stack
+
+- **Next.js** (App Router) + TypeScript + Tailwind CSS
+- **Resend** for transactional email (user confirmation + internal notify)
+- **Vercel** for deployment
+
+## Pages
+
+| Route | Purpose |
+|-------|---------|
+| `/` | Homepage — hero, stakeholders, podcast, roadmap, registration |
+| `/thesis` | Investment thesis incl. **Digital-first capital** + official RBI Digital Rupee links |
+| `/founders` | Founder pathway & FAQ |
+| `/investors` | Investor / LP network |
+| `/podcast` | Podcast landing |
+| `/join` | Dynamic multi-stakeholder registration |
+| `/contact` | Contact form |
+| `/privacy`, `/terms` | Legal |
+| `/thank-you`, `/application-received` | Success states |
+
+## Digital Rupee (official)
+
+On **Our Thesis → Digital-first capital** (`/thesis#digital-first`):
+
+- [RBI Digital Rupee (e₹) FAQs](https://www.rbi.org.in/commonman/english/scripts/FAQs.aspx?Id=3686)
+- [RBI CBDC Concept Note (PDF)](https://rbidocs.rbi.org.in/rdocs/PublicationReport/Pdfs/CONCEPTNOTEACB531172E0B4DFC9A6E506C2C24FFB6.PDF)
+
+Configured in `src/lib/config.ts` as `siteConfig.digitalRupee`.
+
+## Local development
 
 ```bash
+npm install
+cp .env.example .env.local
+# Add RESEND_API_KEY (optional for UI-only; required for real email)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See `.env.example`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `RESEND_API_KEY` | For email | Resend API key |
+| `RESEND_FROM_EMAIL` | Prod | Verified sender |
+| `CONTACT_EMAIL` | Recommended | Public contact address |
+| `INTERNAL_NOTIFY_EMAIL` | Recommended | Team inbox for leads |
+| `NEXT_PUBLIC_SITE_URL` | Prod | Canonical site URL |
 
-## Learn More
+## Deploy (Vercel)
 
-To learn more about Next.js, take a look at the following resources:
+1. Push this repo to GitHub.
+2. Import the project in Vercel.
+3. Set environment variables (at least `RESEND_API_KEY`, `INTERNAL_NOTIFY_EMAIL`, `NEXT_PUBLIC_SITE_URL`).
+4. Deploy.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Verify a domain in Resend before using a custom `RESEND_FROM_EMAIL`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Brand (Quiet Institutionalism)
 
-## Deploy on Vercel
+- Ivory `#F7F5EF` · Forest `#123C31` · Gold `#B3935F` · Ink `#111311`
+- Display: Cormorant Garamond · UI: Inter · Mono: IBM Plex Mono
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Legal posture (V1)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No fund offers, return promises, fake waitlist counts, or portfolio claims.
+Footer and investor pages include the standard disclaimer.
