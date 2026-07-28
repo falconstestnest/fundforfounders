@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
         setError(data.error || "Login failed");
         return;
       }
-      router.push("/admin/leads");
+      router.push("/admin");
       router.refresh();
     } catch {
       setError("Network error");
@@ -34,45 +34,57 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-ivory px-5">
-      <form
-        onSubmit={onSubmit}
-        className="w-full max-w-sm border border-border bg-paper p-8"
-      >
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-forest">
-          Admin
-        </p>
-        <h1 className="font-display mt-3 text-2xl tracking-tight text-ink">
-          FundForFounders
-        </h1>
-        <p className="mt-2 text-sm text-stone">
-          Enter the admin secret to view leads.
-        </p>
-        <label className="mt-6 block text-sm font-medium text-ink" htmlFor="password">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="input-field mt-1.5"
-          required
-        />
-        {error && (
-          <p className="mt-3 text-sm text-error" role="alert">
-            {error}
+    <div className="admin-shell fixed inset-0 z-[200] flex items-center justify-center bg-[#F3F3F2] px-5">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <p className="text-lg font-semibold tracking-tight text-[#1B1916]">
+            Fund<span className="text-[#00A071]">For</span>Founders
           </p>
-        )}
-        <button
-          type="submit"
-          className="btn-primary mt-6 w-full"
-          disabled={loading}
+          <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#928C86]">
+            Network OS
+          </p>
+        </div>
+
+        <form
+          onSubmit={onSubmit}
+          className="rounded-2xl border border-[#E4E3E0] bg-white p-8 shadow-[0_20px_50px_-30px_rgba(27,25,22,0.35)]"
         >
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+          <h1 className="text-xl font-semibold tracking-tight text-[#1B1916]">
+            Sign in to dashboard
+          </h1>
+          <p className="mt-2 text-sm text-[#928C86]">
+            Investor funding & founder pipeline console. Authorized team only.
+          </p>
+
+          <label
+            className="mt-6 block text-xs font-semibold uppercase tracking-[0.1em] text-[#928C86]"
+            htmlFor="password"
+          >
+            Admin secret
+          </label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-2 w-full rounded-lg border border-[#E4E3E0] bg-[#F3F3F2]/40 px-3.5 py-3 text-sm outline-none focus:border-[#00A071] focus:ring-2 focus:ring-[#00A071]/15"
+            required
+          />
+          {error && (
+            <p className="mt-3 text-sm text-red-700" role="alert">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            className="mt-6 w-full rounded-lg bg-[#00A071] py-3 text-sm font-medium text-white disabled:opacity-60"
+            disabled={loading}
+          >
+            {loading ? "Signing in…" : "Enter Network OS"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

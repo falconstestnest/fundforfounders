@@ -1,14 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdminAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
-import { dbListLeads, isDatabaseConfigured } from "@/lib/db";
+import { fetchLeads } from "@/lib/admin-data";
 import { isLeadsStorageConfigured } from "@/lib/leads";
-import {
-  getSupabaseAdmin,
-  isSupabaseConfigured,
-  type LeadRow,
-} from "@/lib/supabase";
-import { AdminLogoutButton } from "@/components/admin/AdminLogoutButton";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { LeadsTable } from "@/components/admin/DashboardUI";
+import { stakeholderTypes } from "@/lib/registration-schema";
+import { PIPELINE_STATUSES, PRIORITIES } from "@/lib/admin-data";
 
 export const dynamic = "force-dynamic";
 
@@ -19,81 +17,13 @@ type SearchParams = Promise<{
   q?: string;
 }>;
 
-async function fetchLeads(filters: {
-  type?: string;
-  status?: string;
-  priority?: string;
-  q?: string;
-}): Promise<{ leads: LeadRow[]; error?: string }> {
-  if (isDatabaseConfigured()) {
-    try {
-      const leads = await dbListLeads({ ...filters, limit: 200 });
-      return { leads };
-    } catch (err) {
-      return {
-        leads: [],
-        error: err instanceof Error ? err.message : "Failed to load leads",
-      };
-    }
-  }
-
-  if (isSupabaseConfigured()) {
-    let query = getSupabaseAdmin()
-      .from("leads")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(200);
-
-    if (filters.type) query = query.eq("stakeholder_type", filters.type);
-    if (filters.status) query = query.eq("status", filters.status);
-    if (filters.priority) query = query.eq("priority", filters.priority);
-    if (filters.q) {
-      query = query.or(
-        `full_name.ilike.%${filters.q}%,email.ilike.%${filters.q}%,organisation.ilike.%${filters.q}%`,
-      );
-    }
-
-    const { data, error } = await query;
-    if (error) return { leads: [], error: error.message };
-    return { leads: (data || []) as LeadRow[] };
-  }
-
-  return { leads: [], error: "No database configured" };
-}
-
 export default async function AdminLeadsPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  if (!isAdminConfigured()) {
-    return (
-      <div className="mx-auto max-w-lg px-6 py-20">
-        <h1 className="font-display text-2xl text-ink">Admin not configured</h1>
-        <p className="mt-3 text-stone">
-          Set <code className="text-ink">ADMIN_SECRET</code> in your environment
-          to enable the leads dashboard.
-        </p>
-      </div>
-    );
-  }
-
-  if (!(await isAdminAuthenticated())) {
-    redirect("/admin/login");
-  }
-
-  if (!isLeadsStorageConfigured()) {
-    return (
-      <div className="mx-auto max-w-lg px-6 py-20">
-        <h1 className="font-display text-2xl text-ink">Database not configured</h1>
-        <p className="mt-3 text-stone">
-          Set <code className="text-ink">DATABASE_URL</code> (Neon) or Supabase
-          service keys.
-        </p>
-        <AdminLogoutButton />
-      </div>
-    );
-  }
+  if (!isAdminConfigured()) redirect("/admin/login");
+  if (!(await isAdminAuthenticated())) redirect("/admin/login");
 
   const params = await searchParams;
   const type = params.type;
@@ -101,18 +31,9 @@ export default async function AdminLeadsPage({
   const priority = params.priority;
   const q = params.q?.trim();
 
-  const { leads: rows, error } = await fetchLeads({
-    type,
-    status,
-    priority,
-    q,
-  });
-
-  if (error) {
-    return (
-      <div className="p-10 text-error">Error loading leads: {error}</div>
-    );
-  }
+  const leads = isLeadsStorageConfigured()
+    ? await fetchLeads({ type, status, priority, q, limit: 200 })
+    : [];
 
   const exportQuery = new URLSearchParams();
   if (type) exportQuery.set("type", type);
@@ -121,206 +42,141 @@ export default async function AdminLeadsPage({
   if (q) exportQuery.set("q", q);
 
   return (
-    <div className="min-h-screen bg-ivory p-6 md:p-10">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-forest">
-              Admin
-            </p>
-            <h1 className="font-display mt-1 text-3xl tracking-tight text-ink">
-              Leads
-            </h1>
-            <p className="mt-1 text-stone">{rows.length} records (max 200)</p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href={`/api/admin/export?${exportQuery.toString()}`}
-              className="btn-primary focus-ring !min-h-10 !text-sm"
-            >
-              Export CSV
-            </a>
-            <AdminLogoutButton />
-          </div>
-        </div>
-
-        <form className="mb-6 flex flex-col gap-3 sm:flex-row" method="get">
+    <AdminShell
+      title="Leads"
+      subtitle={`${leads.length} records · CRM pipeline`}
+      actions={
+        <a
+          href={`/api/admin/export?${exportQuery.toString()}`}
+          className="rounded-lg bg-[#00A071] px-3.5 py-2 text-xs font-medium text-white"
+        >
+          Export CSV
+        </a>
+      }
+    >
+      {/* Filter bar */}
+      <form
+        method="get"
+        className="mb-5 grid gap-3 rounded-2xl border border-[#E4E3E0] bg-white p-4 md:grid-cols-12"
+      >
+        <div className="md:col-span-4">
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#928C86]">
+            Search
+          </label>
           <input
             type="search"
             name="q"
             defaultValue={q || ""}
-            placeholder="Search name, email, organisation…"
-            className="input-field max-w-md"
+            placeholder="Name, email, organisation…"
+            className="w-full rounded-lg border border-[#E4E3E0] bg-[#F3F3F2]/50 px-3 py-2.5 text-sm outline-none focus:border-[#00A071] focus:ring-2 focus:ring-[#00A071]/15"
           />
-          {type && <input type="hidden" name="type" value={type} />}
-          {status && <input type="hidden" name="status" value={status} />}
-          {priority && <input type="hidden" name="priority" value={priority} />}
-          <button type="submit" className="btn-secondary focus-ring !min-h-12">
-            Search
+        </div>
+        <div className="md:col-span-3">
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#928C86]">
+            Stakeholder
+          </label>
+          <select
+            name="type"
+            defaultValue={type || ""}
+            className="w-full rounded-lg border border-[#E4E3E0] bg-[#F3F3F2]/50 px-3 py-2.5 text-sm outline-none focus:border-[#00A071]"
+          >
+            <option value="">All types</option>
+            {stakeholderTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#928C86]">
+            Status
+          </label>
+          <select
+            name="status"
+            defaultValue={status || ""}
+            className="w-full rounded-lg border border-[#E4E3E0] bg-[#F3F3F2]/50 px-3 py-2.5 text-sm outline-none focus:border-[#00A071]"
+          >
+            <option value="">All</option>
+            {PIPELINE_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#928C86]">
+            Priority
+          </label>
+          <select
+            name="priority"
+            defaultValue={priority || ""}
+            className="w-full rounded-lg border border-[#E4E3E0] bg-[#F3F3F2]/50 px-3 py-2.5 text-sm outline-none focus:border-[#00A071]"
+          >
+            <option value="">All</option>
+            {PRIORITIES.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-end md:col-span-1">
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-[#1B1916] px-3 py-2.5 text-sm font-medium text-white"
+          >
+            Filter
           </button>
-        </form>
-
-        <div className="mb-6 flex flex-wrap gap-2">
-          <FilterChip href="/admin/leads" active={!type && !status && !priority}>
-            All
-          </FilterChip>
-          <FilterChip
-            href="/admin/leads?type=Founder"
-            active={type === "Founder"}
-          >
-            Founders
-          </FilterChip>
-          <FilterChip
-            href="/admin/leads?type=Limited%20Partner"
-            active={type === "Limited Partner"}
-          >
-            LPs
-          </FilterChip>
-          <FilterChip
-            href="/admin/leads?type=Venture%20Capital%20Fund"
-            active={type === "Venture Capital Fund"}
-          >
-            VCs
-          </FilterChip>
-          <FilterChip
-            href="/admin/leads?type=Angel%20Investor"
-            active={type === "Angel Investor"}
-          >
-            Angels
-          </FilterChip>
-          <FilterChip href="/admin/leads?status=New" active={status === "New"}>
-            New
-          </FilterChip>
-          <FilterChip
-            href="/admin/leads?priority=High"
-            active={priority === "High"}
-          >
-            High priority
-          </FilterChip>
         </div>
+      </form>
 
-        <div className="overflow-hidden rounded border border-border bg-paper">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-sm">
-              <thead className="bg-ivory text-left">
-                <tr>
-                  <th className="px-5 py-3 font-medium text-ink">Name</th>
-                  <th className="px-5 py-3 font-medium text-ink">Type</th>
-                  <th className="px-5 py-3 font-medium text-ink">Organisation</th>
-                  <th className="px-5 py-3 font-medium text-ink">Status</th>
-                  <th className="px-5 py-3 font-medium text-ink">Priority</th>
-                  <th className="px-5 py-3 font-medium text-ink">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-5 py-12 text-center text-stone"
-                    >
-                      No leads yet. Submit a registration on the public form.
-                    </td>
-                  </tr>
-                )}
-                {rows.map((lead) => (
-                  <tr
-                    key={lead.id}
-                    className="border-t border-border hover:bg-ivory/60"
-                  >
-                    <td className="px-5 py-3.5">
-                      <div className="font-medium text-ink">
-                        {lead.full_name}
-                      </div>
-                      <div className="text-xs text-stone">{lead.email}</div>
-                      {lead.mobile && (
-                        <div className="text-xs text-stone">{lead.mobile}</div>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 text-ink">
-                      {lead.stakeholder_type}
-                    </td>
-                    <td className="px-5 py-3.5 text-stone">
-                      {lead.organisation || "—"}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <StatusBadge status={lead.status} />
-                    </td>
-                    <td className="px-5 py-3.5">
-                      {lead.priority === "High" ||
-                      lead.priority === "Urgent" ? (
-                        <span className="font-medium text-warning">
-                          {lead.priority}
-                        </span>
-                      ) : (
-                        <span className="text-stone">{lead.priority}</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 text-stone">
-                      {new Date(lead.created_at).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <p className="mt-6 text-xs text-stone">
-          <Link href="/" className="text-forest underline">
-            ← Back to site
+      {/* Quick chips */}
+      <div className="mb-5 flex flex-wrap gap-2">
+        {[
+          { href: "/admin/leads", label: "All", on: !type && !status && !priority },
+          {
+            href: "/admin/leads?type=Founder",
+            label: "Founders",
+            on: type === "Founder",
+          },
+          {
+            href: "/admin/leads?type=Limited%20Partner",
+            label: "LPs",
+            on: type === "Limited Partner",
+          },
+          {
+            href: "/admin/leads?type=Venture%20Capital%20Fund",
+            label: "VCs",
+            on: type === "Venture Capital Fund",
+          },
+          {
+            href: "/admin/leads?status=New",
+            label: "New",
+            on: status === "New",
+          },
+          {
+            href: "/admin/leads?priority=High",
+            label: "High priority",
+            on: priority === "High",
+          },
+        ].map((chip) => (
+          <Link
+            key={chip.href}
+            href={chip.href}
+            className={`rounded-full px-3.5 py-1.5 text-xs font-medium ring-1 transition ${
+              chip.on
+                ? "bg-[#00A071] text-white ring-[#00A071]"
+                : "bg-white text-[#1B1916] ring-[#E4E3E0] hover:ring-[#1B1916]"
+            }`}
+          >
+            {chip.label}
           </Link>
-        </p>
+        ))}
       </div>
-    </div>
-  );
-}
 
-function FilterChip({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`rounded px-3.5 py-1.5 text-sm border transition ${
-        active
-          ? "border-forest bg-forest text-white"
-          : "border-border bg-paper text-ink hover:border-ink"
-      }`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    New: "bg-blue-50 text-blue-800",
-    Reviewed: "bg-gray-100 text-gray-700",
-    Qualified: "bg-green-50 text-green-800",
-    Contacted: "bg-purple-50 text-purple-800",
-    "Meeting Scheduled": "bg-indigo-50 text-indigo-800",
-    Active: "bg-emerald-50 text-emerald-800",
-    Nurture: "bg-amber-50 text-amber-800",
-    "Not Relevant": "bg-red-50 text-red-800",
-    Archived: "bg-stone-100 text-stone-600",
-  };
-  return (
-    <span
-      className={`inline-flex rounded px-2.5 py-0.5 text-xs font-medium ${colors[status] || "bg-gray-100 text-gray-700"}`}
-    >
-      {status}
-    </span>
+      <LeadsTable leads={leads} />
+    </AdminShell>
   );
 }

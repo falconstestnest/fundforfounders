@@ -1,0 +1,16 @@
+/* Isolate admin from public site chrome */
+body:has(.admin-shell) > header,
+body:has(.admin-shell) > footer,
+body:has(.admin-shell) > a[href="#main"] {
+  display: none !important;
+}
+
+body:has(.admin-shell) {
+  overflow: hidden;
+}
+
+body:has(.admin-shell) #main {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
