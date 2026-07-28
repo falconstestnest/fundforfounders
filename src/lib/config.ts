@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "FundForFounders",
-  tagline: "We help ambitious founders build enduring companies.",
+  tagline: "Finding founders before the world sees their potential.",
   brandPromise: "Clear before the cheque. Committed after it.",
   description:
-    "A founder-first investment network connecting ambitious founders with investors, institutions and global ecosystem partners — from idea toward enduring companies.",
+    "A founder-first investment network connecting ambitious builders with serious capital and long-term partners.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://fundforfounders.com",
   email: process.env.CONTACT_EMAIL || "hello@fundforfounders.com",
   internalEmail:

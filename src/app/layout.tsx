@@ -21,12 +21,12 @@ const display = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — Launching Soon`,
+    default: `${siteConfig.name} — Launching soon`,
     template: `%s · ${siteConfig.name}`,
   },
   description: siteConfig.description,
   openGraph: {
-    title: `${siteConfig.name} — Launching Soon`,
+    title: siteConfig.tagline,
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: siteConfig.name,
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} — Launching Soon`,
+    title: siteConfig.tagline,
     description: siteConfig.description,
   },
   robots: { index: true, follow: true },

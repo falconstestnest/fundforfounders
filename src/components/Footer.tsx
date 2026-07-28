@@ -5,38 +5,21 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink text-ivory">
-      {/* Mailing strip — Sequoia-like community invite */}
-      <div className="border-b border-white/10">
-        <div className="container-site flex flex-col items-start justify-between gap-6 py-12 md:flex-row md:items-center md:py-14">
-          <div className="max-w-lg">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-forest">
-              Stay close
-            </p>
-            <h2 className="font-display mt-3 text-2xl tracking-tight text-white md:text-3xl">
-              Get the best updates from the FundForFounders network.
-            </h2>
-          </div>
-          <Link href="/join" className="btn-primary focus-ring shrink-0">
-            Join the Network
-          </Link>
-        </div>
-      </div>
-
-      <div className="container-site py-14 md:py-16">
-        <div className="grid gap-12 md:grid-cols-12">
+    <footer className="border-t border-border bg-ink text-ivory">
+      <div className="container-site py-16 md:py-20">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-5">
-            <p className="logo-mark text-lg text-white">
+            <p className="logo-mark text-base text-white">
               Fund<span>For</span>Founders
             </p>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/55">
-              A founder-first investment network. Helping ambitious founders
-              connect with serious capital — from idea to enduring company.
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/45">
+              Founder-first investment network. Serious capital. Long-term
+              relationships.
             </p>
           </div>
 
           <div className="md:col-span-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/40">
+            <p className="text-[0.625rem] font-semibold uppercase tracking-[0.14em] text-white/30">
               Explore
             </p>
             <ul className="mt-4 space-y-2.5 text-sm">
@@ -44,7 +27,7 @@ export function Footer() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="footer-link focus-ring text-white/70"
+                    className="footer-link focus-ring text-white/65"
                   >
                     {l.label}
                   </Link>
@@ -53,7 +36,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="footer-link focus-ring text-white/70"
+                  className="footer-link focus-ring text-white/65"
                 >
                   Contact
                 </Link>
@@ -62,42 +45,14 @@ export function Footer() {
           </div>
 
           <div className="md:col-span-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/40">
-              Connect
+            <p className="text-[0.625rem] font-semibold uppercase tracking-[0.14em] text-white/30">
+              Legal
             </p>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
-                <a
-                  href={siteConfig.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-link focus-ring text-white/70"
-                >
-                  LinkedIn
-                </a>
-              </li>
-              <li>
-                <a
-                  href={siteConfig.social.youtube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-link focus-ring text-white/70"
-                >
-                  YouTube
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="footer-link focus-ring text-white/70"
-                >
-                  {siteConfig.email}
-                </a>
-              </li>
-              <li>
                 <Link
                   href="/privacy"
-                  className="footer-link focus-ring text-white/70"
+                  className="footer-link focus-ring text-white/65"
                 >
                   Privacy
                 </Link>
@@ -105,21 +60,29 @@ export function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="footer-link focus-ring text-white/70"
+                  className="footer-link focus-ring text-white/65"
                 >
                   Terms
                 </Link>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${siteConfig.email}`}
+                  className="footer-link focus-ring text-white/65"
+                >
+                  {siteConfig.email}
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-14 border-t border-white/10 pt-8">
-          <p className="max-w-3xl text-xs leading-relaxed text-white/40">
+          <p className="max-w-2xl text-[0.6875rem] leading-relaxed text-white/35">
             {siteConfig.disclaimer}
           </p>
-          <p className="mt-4 text-xs text-white/30">
-            © {year} {siteConfig.name}. All rights reserved.
+          <p className="mt-4 text-[0.6875rem] text-white/25">
+            © {year} {siteConfig.name}
           </p>
         </div>
       </div>

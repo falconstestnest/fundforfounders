@@ -3,7 +3,7 @@ import RegistrationForm from "@/components/forms/RegistrationForm";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Join the Network",
+  title: "Join the network",
   description:
     "Register as a founder, investor, LP, VC, institution or ecosystem partner with FundForFounders.",
 };
@@ -18,21 +18,27 @@ export default async function JoinPage({ searchParams }: Props) {
 
   return (
     <div className="pt-20 lg:pt-24">
-      <section className="section-pad bg-ivory">
-        <div className="container-site">
-          <div className="mx-auto mb-12 max-w-2xl text-center lg:mb-16">
-            <p className="eyebrow !text-gold">Join the Network</p>
-            <h1 className="font-display mt-4 text-4xl leading-[1.05] tracking-tight md:text-5xl">
-              Be part of what comes next.
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-lg text-stone">
-              Tell us how you would like to participate. We will share relevant
-              launch updates, applications and partnership opportunities.
-            </p>
-            <p className="mx-auto mt-6 max-w-lg text-sm leading-relaxed text-stone">
-              {siteConfig.disclaimer}
-            </p>
-          </div>
+      <section className="border-b border-border py-16 md:py-24">
+        <div className="container-site max-w-3xl">
+          {!type && (
+            <div className="mb-2">
+              <p className="text-sm leading-relaxed text-stone">
+                {siteConfig.disclaimer}
+              </p>
+            </div>
+          )}
+          {type && (
+            <div className="mb-10">
+              <p className="eyebrow">Join the network</p>
+              <h1 className="mt-3 text-3xl font-medium tracking-tight text-ink md:text-4xl">
+                Be part of what comes next.
+              </h1>
+              <p className="mt-4 max-w-xl text-stone">
+                You selected <span className="text-ink font-medium">{type}</span>.
+                Complete the form below.
+              </p>
+            </div>
+          )}
           <RegistrationForm initialType={type} />
         </div>
       </section>

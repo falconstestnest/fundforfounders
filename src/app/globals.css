@@ -7,9 +7,10 @@
   --ivory: #f3f3f2;
   --paper: #ffffff;
   --ink: #1b1916;
-  --forest: #00a071;
-  --moss: #007354;
-  --gold: #00a071;
+  /* Slightly deeper than Sequoia green — ownable institutional accent */
+  --forest: #0c6b52;
+  --moss: #095440;
+  --gold: #0c6b52;
   --stone: #928c86;
   --border: #e4e3e0;
   --success: #007354;
@@ -126,22 +127,6 @@ body {
   text-wrap: balance;
 }
 
-/* Hero ambient — static wash only */
-.hero-wash {
-  background:
-    radial-gradient(
-      ellipse 80% 60% at 85% 20%,
-      color-mix(in srgb, var(--forest) 9%, transparent),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse 50% 40% at 10% 90%,
-      color-mix(in srgb, var(--moss) 6%, transparent),
-      transparent 50%
-    ),
-    var(--ivory);
-}
-
 /* ——— Focus ——— */
 .focus-ring {
   transition: box-shadow var(--duration-fast) var(--ease-out);
@@ -186,6 +171,15 @@ body {
   transform: scaleX(1);
 }
 
+.nav-link-active {
+  color: var(--ink);
+}
+
+.nav-link-active::after {
+  transform: scaleX(1);
+  background: var(--ink);
+}
+
 .footer-link {
   transition: color var(--duration-fast) var(--ease-out);
 }
@@ -210,29 +204,24 @@ body {
   font-size: 0.875rem;
   letter-spacing: -0.01em;
   border: 1px solid transparent;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
   transition:
     background var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out),
     opacity var(--duration-fast) var(--ease-out);
 }
 
 .btn-primary:hover {
   background: var(--moss);
-  box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--moss) 45%, transparent);
 }
 
 .btn-primary:active {
   transform: translateY(1px) scale(0.985);
-  box-shadow: none;
 }
 
 .btn-primary:disabled {
   opacity: 0.55;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .btn-primary.is-loading {
@@ -330,10 +319,8 @@ body {
 }
 
 .card-lift:hover {
-  border-color: color-mix(in srgb, var(--ink) 35%, var(--border));
+  border-color: color-mix(in srgb, var(--ink) 28%, var(--border));
   background: var(--paper);
-  transform: translateY(calc(var(--lift) * -1));
-  box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--ink) 28%, transparent);
 }
 
 .card-lift:hover .card-arrow {
@@ -355,12 +342,12 @@ body {
 
 .network-row:hover,
 .network-row:focus-visible {
-  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  background: color-mix(in srgb, var(--ink) 2.5%, transparent);
 }
 
 .network-row:hover .network-row-title,
 .network-row:focus-visible .network-row-title {
-  color: var(--forest);
+  color: var(--ink);
 }
 
 .network-row-title {
@@ -383,9 +370,8 @@ body {
 }
 
 .stakeholder-type-btn:hover {
-  border-color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 40%, var(--border));
   background: var(--paper);
-  box-shadow: 0 6px 16px -12px color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
 .stakeholder-type-btn:active {
@@ -692,17 +678,17 @@ input[type="checkbox"]:active {
 .eyebrow {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--forest);
+  color: var(--stone);
 }
 
 .headline-xl {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
   font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 0.98;
+  letter-spacing: -0.038em;
+  line-height: 1.05;
   text-wrap: balance;
 }
 

@@ -153,27 +153,75 @@ export default function RegistrationForm({
     <div className="mx-auto max-w-2xl">
       {!selectedType ? (
         <div>
-          <div className="mb-10 text-center">
-            <p className="eyebrow mb-3 !text-gold">Join the Network</p>
-            <h2 className="font-display mb-4 text-3xl text-ink md:text-4xl">
+          <div className="mb-10 max-w-lg">
+            <p className="eyebrow">Join the network</p>
+            <h2 className="mt-3 text-2xl font-medium tracking-tight text-ink md:text-3xl">
               How would you like to participate?
             </h2>
-            <p className="mx-auto max-w-md text-stone">
-              Select the option that best describes you. We&apos;ll show only the
-              relevant fields.
+            <p className="mt-3 text-sm leading-relaxed text-stone md:text-base">
+              Choose a category. Only the fields that matter for you will
+              appear next.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {stakeholderTypes.map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setSelectedType(type)}
-                className="stakeholder-type-btn focus-ring rounded border border-border bg-paper px-5 py-4 text-left"
-              >
-                <span className="block font-medium text-ink">{type}</span>
-              </button>
+          <div className="space-y-8">
+            {(
+              [
+                {
+                  label: "Build",
+                  types: ["Founder", "Startup Team Member"] as const,
+                },
+                {
+                  label: "Capital",
+                  types: [
+                    "Angel Investor",
+                    "HNI",
+                    "Limited Partner",
+                    "Family Office",
+                    "Venture Capital Fund",
+                    "Fund of Funds",
+                    "International Investor",
+                  ] as const,
+                },
+                {
+                  label: "Institutions & ecosystem",
+                  types: [
+                    "Government Agency",
+                    "Public Institution",
+                    "Incubator",
+                    "Accelerator",
+                    "University",
+                    "Corporate Innovation Team",
+                    "Mentor",
+                    "Ecosystem Partner",
+                    "Service Provider",
+                  ] as const,
+                },
+                {
+                  label: "Media & other",
+                  types: ["Media", "Other"] as const,
+                },
+              ] as const
+            ).map((group) => (
+              <div key={group.label}>
+                <p className="mb-3 text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-stone">
+                  {group.label}
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {group.types.map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setSelectedType(type)}
+                      className="stakeholder-type-btn focus-ring rounded border border-border bg-paper px-4 py-3.5 text-left"
+                    >
+                      <span className="block text-sm font-medium text-ink">
+                        {type}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
