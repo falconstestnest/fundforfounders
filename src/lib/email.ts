@@ -1,9 +1,17 @@
 import { Resend } from "resend";
 import { siteConfig } from "./config";
+import type { StakeholderType } from "./registration-schema";
 import {
-  HIGH_PRIORITY_TYPES,
-  type StakeholderType,
-} from "./registration-schema";
+  buildInternalContactEmail,
+  buildInternalRegistrationEmail,
+  buildUserContactEmail,
+  buildUserRegistrationEmail,
+  sampleRegistration,
+  type RegistrationPayload,
+} from "./emails/templates";
+import { EMAIL_CATALOG } from "./emails/catalog";
+
+export type { RegistrationPayload };
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -11,40 +19,27 @@ function getResend() {
   return new Resend(key);
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+async function sendOne(
+  resend: Resend,
+  opts: {
+    to: string | string[];
+    subject: string;
+    html: string;
+    text?: string;
+    replyTo?: string;
+    tags?: { name: string; value: string }[];
+  },
+) {
+  return resend.emails.send({
+    from: siteConfig.fromEmail,
+    to: opts.to,
+    subject: opts.subject,
+    html: opts.html,
+    text: opts.text,
+    replyTo: opts.replyTo,
+    tags: opts.tags,
+  });
 }
-
-function rows(data: Record<string, string | undefined | boolean | null>) {
-  return Object.entries(data)
-    .filter(([, v]) => v !== undefined && v !== null && v !== "")
-    .map(
-      ([k, v]) =>
-        `<tr><td style="padding:6px 12px 6px 0;color:#73766F;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:6px 0;color:#111311;">${escapeHtml(String(v))}</td></tr>`,
-    )
-    .join("");
-}
-
-export type RegistrationPayload = Record<string, unknown> & {
-  fullName: string;
-  email: string;
-  mobile: string;
-  country: string;
-  city: string;
-  stakeholderType: StakeholderType;
-  organisation?: string;
-  designation?: string;
-  linkedin?: string;
-  howHeard?: string;
-  message?: string;
-  consent?: boolean;
-  pitchDeckFileName?: string;
-  pitchDeckFilename?: string;
-};
 
 export async function sendRegistrationEmails(data: RegistrationPayload) {
   const resend = getResend();
@@ -53,61 +48,30 @@ export async function sendRegistrationEmails(data: RegistrationPayload) {
     return { sent: false as const, reason: "missing_api_key" as const };
   }
 
-  const isHighPriority = HIGH_PRIORITY_TYPES.includes(data.stakeholderType);
-  const subjectPrefix = isHighPriority ? "[Priority] " : "";
-
-  const detailMap: Record<string, string | boolean | undefined> = {};
-  for (const [key, value] of Object.entries(data)) {
-    if (
-      key === "consent" ||
-      key === "websiteHoneypot" ||
-      key === "pitchDeck" ||
-      value === undefined ||
-      value === null ||
-      value === ""
-    ) {
-      continue;
-    }
-    if (typeof value === "boolean" || typeof value === "string") {
-      detailMap[key] = value;
-    } else if (typeof value === "number") {
-      detailMap[key] = String(value);
-    }
-  }
-
-  const internalHtml = `
-    <div style="font-family:Georgia,serif;max-width:560px;color:#111311;">
-      <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#506B5B;">New registration</p>
-      <h1 style="font-size:22px;font-weight:500;">${escapeHtml(data.stakeholderType)} — ${escapeHtml(data.fullName)}</h1>
-      <table style="font-size:14px;border-collapse:collapse;">${rows(detailMap)}</table>
-    </div>
-  `;
-
-  const firstName = data.fullName.split(" ")[0] || data.fullName;
-  const userHtml = `
-    <div style="font-family:Georgia,serif;max-width:560px;color:#111311;line-height:1.6;">
-      <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#506B5B;">FundForFounders</p>
-      <h1 style="font-size:24px;font-weight:500;line-height:1.2;">Thank you, ${escapeHtml(firstName)}.</h1>
-      <p>We received your registration as <strong>${escapeHtml(data.stakeholderType)}</strong>.</p>
-      <p>We will share relevant launch updates, applications and partnership opportunities as FundForFounders takes shape.</p>
-      <p style="color:#73766F;font-size:14px;">This is not an offer to invest or a commitment of capital. Submission does not guarantee selection, partnership or investment.</p>
-      <p style="margin-top:32px;font-size:14px;">— The FundForFounders team</p>
-    </div>
-  `;
+  const user = buildUserRegistrationEmail(data);
+  const internal = buildInternalRegistrationEmail(data);
 
   const results = await Promise.allSettled([
-    resend.emails.send({
-      from: siteConfig.fromEmail,
+    sendOne(resend, {
       to: siteConfig.internalEmail,
+      subject: internal.subject,
+      html: internal.html,
+      text: internal.text,
       replyTo: data.email,
-      subject: `${subjectPrefix}FFF registration: ${data.stakeholderType} — ${data.fullName}`,
-      html: internalHtml,
+      tags: [
+        { name: "category", value: internal.id },
+        { name: "stakeholder", value: data.stakeholderType.replace(/\s+/g, "_") },
+      ],
     }),
-    resend.emails.send({
-      from: siteConfig.fromEmail,
+    sendOne(resend, {
       to: data.email,
-      subject: "We received your FundForFounders registration",
-      html: userHtml,
+      subject: user.subject,
+      html: user.html,
+      text: user.text,
+      tags: [
+        { name: "category", value: user.id },
+        { name: "stakeholder", value: data.stakeholderType.replace(/\s+/g, "_") },
+      ],
     }),
   ]);
 
@@ -116,7 +80,14 @@ export async function sendRegistrationEmails(data: RegistrationPayload) {
     console.error("Email delivery issues", failed);
   }
 
-  return { sent: true as const, partial: failed.length > 0 };
+  // Log Resend errors from fulfilled rejections
+  for (const r of results) {
+    if (r.status === "fulfilled" && r.value.error) {
+      console.error("Resend API error", r.value.error);
+    }
+  }
+
+  return { sent: true as const, partial: failed.length > 0, user, internal };
 }
 
 export async function sendContactEmails(data: {
@@ -131,34 +102,189 @@ export async function sendContactEmails(data: {
     return { sent: false as const };
   }
 
+  const user = buildUserContactEmail(data);
+  const internal = buildInternalContactEmail(data);
+
   await Promise.allSettled([
-    resend.emails.send({
-      from: siteConfig.fromEmail,
+    sendOne(resend, {
       to: siteConfig.internalEmail,
+      subject: internal.subject,
+      html: internal.html,
+      text: internal.text,
       replyTo: data.email,
-      subject: `FFF contact: ${data.fullName}`,
-      html: `
-        <div style="font-family:Georgia,serif;max-width:560px;">
-          <h1 style="font-size:20px;">Contact form</h1>
-          <p><strong>${escapeHtml(data.fullName)}</strong> (${escapeHtml(data.email)})</p>
-          ${data.organisation ? `<p>Organisation: ${escapeHtml(data.organisation)}</p>` : ""}
-          <p style="white-space:pre-wrap;">${escapeHtml(data.message)}</p>
-        </div>
-      `,
+      tags: [{ name: "category", value: internal.id }],
     }),
-    resend.emails.send({
-      from: siteConfig.fromEmail,
+    sendOne(resend, {
       to: data.email,
-      subject: "We received your message — FundForFounders",
-      html: `
-        <div style="font-family:Georgia,serif;max-width:560px;line-height:1.6;">
-          <p>Thank you for writing to FundForFounders.</p>
-          <p>We will respond if a follow-up is appropriate.</p>
-          <p style="color:#73766F;font-size:14px;">— The FundForFounders team</p>
-        </div>
-      `,
+      subject: user.subject,
+      html: user.html,
+      text: user.text,
+      tags: [{ name: "category", value: user.id }],
     }),
   ]);
 
-  return { sent: true as const };
+  return { sent: true as const, user, internal };
 }
+
+export type TestEmailResult = {
+  id: string;
+  name: string;
+  subject: string;
+  to: string;
+  ok: boolean;
+  resendId?: string;
+  error?: string;
+};
+
+/**
+ * Send one sample of every catalogued email template to a test inbox.
+ */
+export async function sendAllTestEmails(
+  to: string,
+): Promise<TestEmailResult[]> {
+  const resend = getResend();
+  if (!resend) {
+    throw new Error("RESEND_API_KEY is not set");
+  }
+
+  const results: TestEmailResult[] = [];
+
+  const userTypes: StakeholderType[] = [
+    "Founder",
+    "Angel Investor",
+    "Limited Partner",
+    "Venture Capital Fund",
+    "Fund of Funds",
+    "Government Agency",
+    "Incubator",
+    "Media",
+    "Other",
+  ];
+
+  // User registration templates (one per variant)
+  for (const type of userTypes) {
+    const data = sampleRegistration(type);
+    data.email = to;
+    const built = buildUserRegistrationEmail(data);
+    const entry = EMAIL_CATALOG.find((c) => c.id === built.id);
+    try {
+      const { data: sent, error } = await sendOne(resend, {
+        to,
+        subject: `[TEST] ${built.subject}`,
+        html: built.html,
+        text: built.text,
+        tags: [
+          { name: "category", value: "test" },
+          { name: "template", value: built.id },
+        ],
+      });
+      results.push({
+        id: built.id,
+        name: entry?.name || built.id,
+        subject: `[TEST] ${built.subject}`,
+        to,
+        ok: !error,
+        resendId: sent?.id,
+        error: error ? String(error.message || error) : undefined,
+      });
+    } catch (e) {
+      results.push({
+        id: built.id,
+        name: entry?.name || built.id,
+        subject: `[TEST] ${built.subject}`,
+        to,
+        ok: false,
+        error: e instanceof Error ? e.message : "send failed",
+      });
+    }
+  }
+
+  // Internal registration (normal + priority)
+  for (const type of ["Founder", "Limited Partner"] as StakeholderType[]) {
+    const data = sampleRegistration(type);
+    data.email = to;
+    const built = buildInternalRegistrationEmail(data);
+    const entry = EMAIL_CATALOG.find((c) => c.id === built.id);
+    try {
+      const { data: sent, error } = await sendOne(resend, {
+        to,
+        subject: `[TEST] ${built.subject}`,
+        html: built.html,
+        text: built.text,
+        replyTo: to,
+        tags: [
+          { name: "category", value: "test" },
+          { name: "template", value: built.id },
+        ],
+      });
+      results.push({
+        id: built.id,
+        name: entry?.name || built.id,
+        subject: `[TEST] ${built.subject}`,
+        to,
+        ok: !error,
+        resendId: sent?.id,
+        error: error ? String(error.message || error) : undefined,
+      });
+    } catch (e) {
+      results.push({
+        id: built.id,
+        name: entry?.name || built.id,
+        subject: `[TEST] ${built.subject}`,
+        to,
+        ok: false,
+        error: e instanceof Error ? e.message : "send failed",
+      });
+    }
+  }
+
+  // Contact user + internal
+  const contactData = {
+    fullName: "Jimmy Manalel",
+    email: to,
+    organisation: "FundForFounders Demo",
+    message:
+      "This is a design test of the contact form email templates. Safe to ignore.",
+  };
+
+  for (const built of [
+    buildUserContactEmail(contactData),
+    buildInternalContactEmail(contactData),
+  ]) {
+    const entry = EMAIL_CATALOG.find((c) => c.id === built.id);
+    try {
+      const { data: sent, error } = await sendOne(resend, {
+        to,
+        subject: `[TEST] ${built.subject}`,
+        html: built.html,
+        text: built.text,
+        tags: [
+          { name: "category", value: "test" },
+          { name: "template", value: built.id },
+        ],
+      });
+      results.push({
+        id: built.id,
+        name: entry?.name || built.id,
+        subject: `[TEST] ${built.subject}`,
+        to,
+        ok: !error,
+        resendId: sent?.id,
+        error: error ? String(error.message || error) : undefined,
+      });
+    } catch (e) {
+      results.push({
+        id: built.id,
+        name: entry?.name || built.id,
+        subject: `[TEST] ${built.subject}`,
+        to,
+        ok: false,
+        error: e instanceof Error ? e.message : "send failed",
+      });
+    }
+  }
+
+  return results;
+}
+
+export { EMAIL_CATALOG };
