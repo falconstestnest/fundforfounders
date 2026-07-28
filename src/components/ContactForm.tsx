@@ -54,7 +54,7 @@ export function ContactForm() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div>
+        <div className="field-wrap">
           <label className="label-field" htmlFor="fullName">
             Full name *
           </label>
@@ -65,8 +65,11 @@ export function ContactForm() {
             className="input-field"
             autoComplete="name"
           />
+          <p className="field-error" aria-hidden>
+            &nbsp;
+          </p>
         </div>
-        <div>
+        <div className="field-wrap">
           <label className="label-field" htmlFor="email">
             Email *
           </label>
@@ -78,9 +81,12 @@ export function ContactForm() {
             className="input-field"
             autoComplete="email"
           />
+          <p className="field-error" aria-hidden>
+            &nbsp;
+          </p>
         </div>
       </div>
-      <div>
+      <div className="field-wrap">
         <label className="label-field" htmlFor="organisation">
           Organisation
         </label>
@@ -90,8 +96,11 @@ export function ContactForm() {
           className="input-field"
           autoComplete="organization"
         />
+        <p className="field-error" aria-hidden>
+          &nbsp;
+        </p>
       </div>
-      <div>
+      <div className="field-wrap">
         <label className="label-field" htmlFor="message">
           Message *
         </label>
@@ -102,6 +111,9 @@ export function ContactForm() {
           rows={5}
           className="input-field min-h-[8rem] resize-y"
         />
+        <p className="field-error" aria-hidden>
+          &nbsp;
+        </p>
       </div>
       <label className="flex items-start gap-3 text-sm text-stone">
         <input

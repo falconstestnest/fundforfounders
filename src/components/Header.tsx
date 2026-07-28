@@ -30,11 +30,6 @@ export function Header() {
     };
   }, [open]);
 
-  // Close menu on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
   const isActive = (href: string) =>
     href === "/"
       ? pathname === "/"
@@ -84,7 +79,7 @@ export function Header() {
           </Link>
           <button
             type="button"
-            className="focus-ring flex h-10 w-10 items-center justify-center rounded border border-border bg-paper hover:border-ink/25"
+            className="menu-toggle focus-ring flex items-center justify-center rounded border border-border bg-paper"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -121,7 +116,7 @@ export function Header() {
                 href={link.href}
                 className={`focus-ring rounded px-2 py-3 text-base font-medium ${
                   isActive(link.href) ? "text-forest" : "text-ink"
-                } hover:bg-paper`}
+                }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
                 onClick={() => setOpen(false)}
               >

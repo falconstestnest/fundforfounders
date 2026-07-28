@@ -35,7 +35,7 @@ export default function PodcastPage() {
           </div>
           <div className="md:col-span-5">
             <FadeIn>
-              <div className="border border-border bg-paper px-6 py-10 md:px-8">
+              <div className="panel-static px-6 py-10 md:px-8">
                 <p className="text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-stone">
                   Archive
                 </p>

@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useMemo,
+  useState,
+  isValidElement,
+  cloneElement,
+  type ReactElement,
+} from "react";
+import { useRouter } from "next/navigation";
 import { useForm, type FieldErrors, type UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,27 +23,24 @@ type Props = {
   onSuccessRedirect?: boolean;
 };
 
+function parseType(initialType?: string): StakeholderType | null {
+  return stakeholderTypes.includes(initialType as StakeholderType)
+    ? (initialType as StakeholderType)
+    : null;
+}
+
 export default function RegistrationForm({
   initialType,
   onSuccessRedirect = true,
 }: Props) {
-  const parsedInitial = stakeholderTypes.includes(
-    initialType as StakeholderType,
-  )
-    ? (initialType as StakeholderType)
-    : null;
-
+  const router = useRouter();
   const [selectedType, setSelectedType] = useState<StakeholderType | null>(
-    parsedInitial,
+    () => parseType(initialType),
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
   const [pitchDeckName, setPitchDeckName] = useState("");
-
-  useEffect(() => {
-    if (parsedInitial) setSelectedType(parsedInitial);
-  }, [parsedInitial]);
 
   const schema = useMemo(
     () => (selectedType ? getSchemaForType(selectedType) : null),
@@ -49,11 +53,47 @@ export default function RegistrationForm({
     formState: { errors },
     reset,
     setError,
+    setFocus,
   } = useForm({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: schema ? (zodResolver(schema as any) as any) : undefined,
     mode: "onTouched",
   });
+
+  function focusFirstInvalid(fieldMap?: Record<string, string>) {
+    const order = [
+      "fullName",
+      "email",
+      "mobile",
+      "country",
+      "city",
+      "startupName",
+      "sector",
+      "stage",
+      "businessSummary",
+      "problem",
+      "fundName",
+      "institution",
+      "consent",
+    ];
+    const keys = fieldMap
+      ? order.filter((k) => fieldMap[k])
+      : order.filter((k) => errors[k as keyof typeof errors]);
+    const first = keys[0];
+    if (first) {
+      try {
+        setFocus(first as never);
+      } catch {
+        const el = document.getElementById(first);
+        el?.focus();
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onInvalid = () => {
+    focusFirstInvalid();
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
@@ -86,6 +126,7 @@ export default function RegistrationForm({
           for (const [key, message] of Object.entries(result.fields)) {
             setError(key as never, { message });
           }
+          focusFirstInvalid(result.fields);
         }
         setServerError(
           result.error ||
@@ -95,7 +136,7 @@ export default function RegistrationForm({
       }
 
       if (onSuccessRedirect && result.redirect) {
-        window.location.href = result.redirect;
+        router.push(result.redirect);
         return;
       }
 
@@ -227,7 +268,7 @@ export default function RegistrationForm({
         </div>
       ) : (
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit, onInvalid)}
           className="form-step-enter relative space-y-8 rounded border border-border bg-paper p-6 sm:p-8 md:p-10"
           noValidate
         >
@@ -267,6 +308,7 @@ export default function RegistrationForm({
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <Field
+                name="fullName"
                 label="Full name *"
                 error={errMsg(errors, "fullName")}
               >
@@ -274,21 +316,24 @@ export default function RegistrationForm({
                   {...register("fullName")}
                   className={inputClass}
                   autoComplete="name"
-                  aria-invalid={!!errors.fullName}
                 />
               </Field>
 
-              <Field label="Email *" error={errMsg(errors, "email")}>
+              <Field
+                name="email"
+                label="Email *"
+                error={errMsg(errors, "email")}
+              >
                 <input
                   type="email"
                   {...register("email")}
                   className={inputClass}
                   autoComplete="email"
-                  aria-invalid={!!errors.email}
                 />
               </Field>
 
               <Field
+                name="mobile"
                 label="Mobile number *"
                 error={errMsg(errors, "mobile")}
               >
@@ -297,16 +342,18 @@ export default function RegistrationForm({
                   {...register("mobile")}
                   className={inputClass}
                   autoComplete="tel"
-                  aria-invalid={!!errors.mobile}
                 />
               </Field>
 
-              <Field label="Country *" error={errMsg(errors, "country")}>
+              <Field
+                name="country"
+                label="Country *"
+                error={errMsg(errors, "country")}
+              >
                 <input
                   {...register("country")}
                   className={inputClass}
                   autoComplete="country-name"
-                  aria-invalid={!!errors.country}
                 />
               </Field>
 
@@ -469,8 +516,7 @@ export default function RegistrationForm({
   );
 }
 
-const inputClass =
-  "w-full px-4 py-3 rounded border border-border bg-paper text-ink placeholder:text-stone/70 focus:outline-none focus:ring-2 focus:ring-forest/25 focus:border-forest transition input-field !min-h-0";
+const inputClass = "input-field";
 
 function errMsg(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -485,19 +531,42 @@ function errMsg(
 function Field({
   label,
   error,
+  name: nameProp,
   children,
 }: {
   label: string;
   error?: string;
+  name?: string;
   children: React.ReactNode;
 }) {
+  const childProps = isValidElement(children)
+    ? (children.props as { name?: string; id?: string })
+    : {};
+  const id = nameProp || childProps.id || childProps.name;
+  const errorId = id ? `${id}-error` : undefined;
+
+  const control =
+    isValidElement(children) && id
+      ? cloneElement(children as ReactElement<Record<string, unknown>>, {
+          id,
+          "aria-invalid": Boolean(error) || undefined,
+          "aria-describedby": error && errorId ? errorId : undefined,
+        })
+      : children;
+
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-ink">
+    <div className="field-wrap">
+      <label className="label-field" htmlFor={id}>
         {label}
       </label>
-      {children}
-      {error && <p className="mt-1.5 text-sm text-error">{error}</p>}
+      {control}
+      <p
+        id={errorId}
+        className="field-error"
+        role={error ? "alert" : undefined}
+      >
+        {error || "\u00a0"}
+      </p>
     </div>
   );
 }

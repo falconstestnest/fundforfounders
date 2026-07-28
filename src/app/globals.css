@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
-/* Sequoia-inspired institutional system for FundForFounders
-   Cool off-white, near-black type, signature green accent. */
+/* FundForFounders motion + interaction system
+   Tokens: 180 / 220 / 280ms · ease-out · max lift 2px
+   Hover effects only on fine pointers. Reduced-motion strips transforms. */
 
 :root {
   --ivory: #f3f3f2;
   --paper: #ffffff;
   --ink: #1b1916;
-  /* Slightly deeper than Sequoia green — ownable institutional accent */
   --forest: #0c6b52;
   --moss: #095440;
   --gold: #0c6b52;
@@ -21,13 +21,15 @@
   --background: var(--ivory);
   --foreground: var(--ink);
 
-  /* Motion tokens — tactile, never elastic */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 180ms;
   --duration: 220ms;
   --duration-slow: 280ms;
   --lift: 2px;
+  --arrow-shift: 4px;
+  --press-y: 1px;
+  --press-scale: 0.985;
 }
 
 @theme inline {
@@ -55,6 +57,7 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ——— Reduced motion: keep content visible, strip transforms ——— */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -69,12 +72,37 @@ html {
     scroll-behavior: auto !important;
   }
 
-  .reveal,
+  .fade-in-motion,
   .network-row,
-  .roadmap-item,
-  .stakeholder-type-btn {
+  .stakeholder-type-btn,
+  .card-lift,
+  .success-check,
+  .success-panel,
+  .form-step-enter,
+  .alert-in,
+  .mobile-drawer,
+  .btn-primary,
+  .btn-secondary {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .nav-link::after {
+    transition: none !important;
+  }
+
+  .accordion-icon {
+    transition: none !important;
+  }
+
+  .accordion-body {
+    transition: none !important;
+  }
+
+  .btn-spinner {
+    animation: none !important;
+    border-color: currentColor;
+    opacity: 0.6;
   }
 }
 
@@ -93,7 +121,6 @@ body {
   color: var(--ink);
 }
 
-/* Display = tight institutional sans */
 .font-display {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
   font-weight: 500;
@@ -123,13 +150,9 @@ body {
   max-width: 38rem;
 }
 
-.text-balance {
-  text-wrap: balance;
-}
-
-/* ——— Focus ——— */
-.focus-ring {
-  transition: box-shadow var(--duration-fast) var(--ease-out);
+/* ——— Focus (never compete with hover) ——— */
+.focus-ring:focus {
+  outline: none;
 }
 
 .focus-ring:focus-visible {
@@ -137,11 +160,7 @@ body {
   outline-offset: 3px;
 }
 
-.focus-ring:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* ——— Navigation links ——— */
+/* ——— Navigation (primary) ——— */
 .nav-link {
   position: relative;
   color: color-mix(in srgb, var(--ink) 70%, transparent);
@@ -161,14 +180,22 @@ body {
   transition: transform var(--duration) var(--ease-out);
 }
 
-.nav-link:hover,
 .nav-link:focus-visible {
   color: var(--ink);
 }
 
-.nav-link:hover::after,
 .nav-link:focus-visible::after {
   transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover {
+    color: var(--ink);
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
 }
 
 .nav-link-active {
@@ -184,18 +211,24 @@ body {
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.footer-link:hover,
 .footer-link:focus-visible {
   color: #fff;
 }
 
-/* ——— Buttons (tactile) ——— */
+@media (hover: hover) and (pointer: fine) {
+  .footer-link:hover {
+    color: #fff;
+  }
+}
+
+/* ——— Primary buttons ——— */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   min-height: 2.85rem;
+  min-width: 2.85rem;
   padding: 0.7rem 1.35rem;
   border-radius: 0.25rem;
   background: var(--forest);
@@ -210,12 +243,14 @@ body {
     opacity var(--duration-fast) var(--ease-out);
 }
 
-.btn-primary:hover {
-  background: var(--moss);
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover:not(:disabled) {
+    background: var(--moss);
+  }
 }
 
-.btn-primary:active {
-  transform: translateY(1px) scale(0.985);
+.btn-primary:active:not(:disabled) {
+  transform: translateY(var(--press-y)) scale(var(--press-scale));
 }
 
 .btn-primary:disabled {
@@ -246,17 +281,18 @@ body {
     background var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+    transform var(--duration-fast) var(--ease-out);
 }
 
-.btn-secondary:hover {
-  background: var(--ink);
-  color: var(--ivory);
+@media (hover: hover) and (pointer: fine) {
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--ivory);
+  }
 }
 
-.btn-secondary:active {
-  transform: translateY(1px) scale(0.985);
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(var(--press-y)) scale(var(--press-scale));
 }
 
 .btn-ghost {
@@ -272,11 +308,13 @@ body {
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.btn-ghost:hover {
-  color: var(--forest);
+@media (hover: hover) and (pointer: fine) {
+  .btn-ghost:hover {
+    color: var(--forest);
+  }
 }
 
-/* Text link with arrow */
+/* Text link + arrow (primary pathway) */
 .link-arrow {
   display: inline-flex;
   align-items: center;
@@ -288,20 +326,27 @@ body {
   padding-bottom: 1px;
   transition:
     color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    gap var(--duration) var(--ease-out);
+    border-color var(--duration-fast) var(--ease-out);
 }
 
-.link-arrow:hover,
 .link-arrow:focus-visible {
   color: var(--forest);
   border-color: var(--forest);
-  gap: 0.55rem;
 }
 
-.link-arrow:hover .card-arrow,
 .link-arrow:focus-visible .card-arrow {
-  transform: translateX(4px);
+  transform: translateX(var(--arrow-shift));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link-arrow:hover {
+    color: var(--forest);
+    border-color: var(--forest);
+  }
+
+  .link-arrow:hover .card-arrow {
+    transform: translateX(var(--arrow-shift));
+  }
 }
 
 .card-arrow {
@@ -309,152 +354,110 @@ body {
   transition: transform var(--duration) var(--ease-out);
 }
 
-/* ——— Cards ——— */
+/* Secondary interactive surfaces (border only — no lift unless link with class) */
 .card-lift {
-  transition:
-    border-color var(--duration) var(--ease-out),
-    background var(--duration) var(--ease-out),
-    box-shadow var(--duration) var(--ease-out),
-    transform var(--duration) var(--ease-out);
+  transition: border-color var(--duration) var(--ease-out);
 }
 
-.card-lift:hover {
-  border-color: color-mix(in srgb, var(--ink) 28%, var(--border));
+@media (hover: hover) and (pointer: fine) {
+  a.card-lift:hover,
+  button.card-lift:hover {
+    border-color: color-mix(in srgb, var(--ink) 28%, var(--border));
+  }
+
+  a.card-lift:hover .card-arrow {
+    transform: translateX(var(--arrow-shift));
+    color: var(--forest);
+  }
+}
+
+/* Passive panels — no hover affordance */
+.panel-static {
+  border: 1px solid var(--border);
   background: var(--paper);
 }
 
-.card-lift:hover .card-arrow {
-  transform: translateX(4px);
-  color: var(--forest);
-}
-
-.card-lift:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-/* Network list rows (homepage stakeholders) */
+/* Network list rows (primary pathways) */
 .network-row {
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    padding-left var(--duration) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out);
+  min-height: 44px;
 }
 
-.network-row:hover,
 .network-row:focus-visible {
   background: color-mix(in srgb, var(--ink) 2.5%, transparent);
 }
 
-.network-row:hover .network-row-title,
-.network-row:focus-visible .network-row-title {
-  color: var(--ink);
+.network-row:focus-visible .card-arrow {
+  transform: translateX(var(--arrow-shift));
+  color: var(--forest);
 }
 
 .network-row-title {
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.network-row:hover .card-arrow,
-.network-row:focus-visible .card-arrow {
-  transform: translateX(5px);
-  color: var(--forest);
+@media (hover: hover) and (pointer: fine) {
+  .network-row:hover {
+    background: color-mix(in srgb, var(--ink) 2.5%, transparent);
+  }
+
+  .network-row:hover .card-arrow {
+    transform: translateX(var(--arrow-shift));
+    color: var(--forest);
+  }
 }
 
-/* Stakeholder type picker buttons */
+/* Stakeholder type buttons (primary) */
 .stakeholder-type-btn {
+  min-height: 44px;
   transition:
     border-color var(--duration) var(--ease-out),
     background var(--duration) var(--ease-out),
-    box-shadow var(--duration) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
 }
 
-.stakeholder-type-btn:hover {
-  border-color: color-mix(in srgb, var(--ink) 40%, var(--border));
-  background: var(--paper);
+@media (hover: hover) and (pointer: fine) {
+  .stakeholder-type-btn:hover {
+    border-color: color-mix(in srgb, var(--ink) 40%, var(--border));
+    background: var(--paper);
+  }
+
+  .stakeholder-type-btn:hover span {
+    color: var(--forest);
+  }
 }
 
 .stakeholder-type-btn:active {
-  transform: scale(0.99);
+  transform: scale(var(--press-scale));
 }
 
 .stakeholder-type-btn span {
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.stakeholder-type-btn:hover span {
-  color: var(--forest);
+/* Passive: direction / timeline cells — no hover motion */
+.direction-cell {
+  /* static informational */
 }
 
-/* Roadmap / timeline items */
-.roadmap-item {
-  transition:
-    border-color var(--duration) var(--ease-out),
-    background var(--duration) var(--ease-out),
-    transform var(--duration) var(--ease-out),
-    box-shadow var(--duration) var(--ease-out);
-}
-
-.roadmap-item:hover {
-  border-color: color-mix(in srgb, var(--forest) 35%, var(--border));
-  background: var(--paper);
-  transform: translateY(calc(var(--lift) * -1));
-  box-shadow: 0 6px 18px -14px color-mix(in srgb, var(--ink) 25%, transparent);
-}
-
-.roadmap-item:hover .roadmap-index {
-  color: var(--forest);
-}
-
-.roadmap-index {
-  transition: color var(--duration-fast) var(--ease-out);
-}
-
-/* Podcast / media cards */
-.podcast-card {
-  transition:
-    border-color var(--duration) var(--ease-out),
-    box-shadow var(--duration) var(--ease-out),
-    transform var(--duration) var(--ease-out);
-}
-
-.podcast-card:hover {
-  border-color: color-mix(in srgb, var(--ink) 22%, var(--border));
-  transform: translateY(calc(var(--lift) * -1));
-  box-shadow: 0 10px 28px -18px color-mix(in srgb, var(--ink) 30%, transparent);
-}
-
-.podcast-wave-bar {
-  transform-origin: bottom center;
-  transition: background var(--duration-fast) var(--ease-out);
-}
-
-.podcast-card:hover .podcast-wave-bar {
-  background: color-mix(in srgb, var(--forest) 45%, transparent);
-}
-
-/* Accordion (native details) */
+/* Accordion (interactive, secondary motion) */
 .accordion {
   border: 1px solid var(--border);
   background: var(--paper);
   border-radius: 0.5rem;
-  transition:
-    border-color var(--duration) var(--ease-out),
-    box-shadow var(--duration) var(--ease-out);
-}
-
-.accordion:hover {
-  border-color: color-mix(in srgb, var(--ink) 18%, var(--border));
+  transition: border-color var(--duration) var(--ease-out);
 }
 
 .accordion[open] {
   border-color: color-mix(in srgb, var(--forest) 30%, var(--border));
-  box-shadow: 0 4px 16px -12px color-mix(in srgb, var(--ink) 20%, transparent);
 }
 
 .accordion summary {
   list-style: none;
   cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -462,8 +465,16 @@ body {
   display: none;
 }
 
-.accordion summary:hover {
-  color: var(--forest);
+.accordion summary:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .accordion summary:hover {
+    color: var(--forest);
+  }
 }
 
 .accordion-icon {
@@ -489,7 +500,20 @@ body {
   overflow: hidden;
 }
 
-/* Forms */
+/* ——— Forms ——— */
+.field-wrap {
+  /* Reserve space for one error line to avoid layout shift */
+  min-height: 0;
+}
+
+.field-error {
+  min-height: 1.25rem;
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: var(--error);
+}
+
 .input-field {
   width: 100%;
   min-height: 3rem;
@@ -505,8 +529,10 @@ body {
     background var(--duration-fast) var(--ease-out);
 }
 
-.input-field:hover:not(:disabled):not(:focus) {
-  border-color: color-mix(in srgb, var(--ink) 22%, var(--border));
+@media (hover: hover) and (pointer: fine) {
+  .input-field:hover:not(:disabled):not(:focus):not([aria-invalid="true"]) {
+    border-color: color-mix(in srgb, var(--ink) 22%, var(--border));
+  }
 }
 
 .input-field:focus {
@@ -518,6 +544,19 @@ body {
 .input-field[aria-invalid="true"] {
   border-color: var(--error);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 12%, transparent);
+  animation: invalid-pulse-once var(--duration-slow) var(--ease-out) 1;
+}
+
+@keyframes invalid-pulse-once {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--error) 0%, transparent);
+  }
+  40% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 18%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 12%, transparent);
+  }
 }
 
 .label-field {
@@ -529,11 +568,10 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Checkbox tactile */
 input[type="checkbox"] {
-  transition:
-    box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+  width: 1.125rem;
+  height: 1.125rem;
+  min-width: 1.125rem;
 }
 
 input[type="checkbox"]:focus-visible {
@@ -542,13 +580,14 @@ input[type="checkbox"]:focus-visible {
 }
 
 input[type="checkbox"]:active {
-  transform: scale(0.92);
+  transform: scale(0.94);
 }
 
 /* Loading spinner */
 .btn-spinner {
   width: 0.95rem;
   height: 0.95rem;
+  flex-shrink: 0;
   border: 1.5px solid color-mix(in srgb, currentColor 25%, transparent);
   border-top-color: currentColor;
   border-radius: 50%;
@@ -561,7 +600,7 @@ input[type="checkbox"]:active {
   }
 }
 
-/* Success feedback */
+/* Success — opacity only preferred under reduced motion (handled above) */
 .success-check {
   animation: success-pop var(--duration-slow) var(--ease-out) both;
 }
@@ -569,7 +608,7 @@ input[type="checkbox"]:active {
 @keyframes success-pop {
   from {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -584,15 +623,12 @@ input[type="checkbox"]:active {
 @keyframes success-fade {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-/* Form step transition (stakeholder selected) */
 .form-step-enter {
   animation: form-step-in var(--duration-slow) var(--ease-out) both;
 }
@@ -600,15 +636,12 @@ input[type="checkbox"]:active {
 @keyframes form-step-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-/* Alert / error appear */
 .alert-in {
   animation: form-step-in var(--duration) var(--ease-out) both;
 }
@@ -634,15 +667,12 @@ input[type="checkbox"]:active {
 @keyframes drawer-in {
   from {
     opacity: 0;
-    transform: translateY(-6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-/* Logo subtle hover */
 .logo-mark {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
   font-weight: 600;
@@ -650,12 +680,27 @@ input[type="checkbox"]:active {
   transition: opacity var(--duration-fast) var(--ease-out);
 }
 
-.logo-mark:hover {
-  opacity: 0.82;
+@media (hover: hover) and (pointer: fine) {
+  .logo-mark:hover {
+    opacity: 0.82;
+  }
 }
 
 .logo-mark span {
   color: var(--forest);
+}
+
+/* Menu button touch target */
+.menu-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-toggle:hover {
+    border-color: color-mix(in srgb, var(--ink) 25%, var(--border));
+  }
 }
 
 /* Layout utilities */
@@ -708,4 +753,22 @@ input[type="checkbox"]:active {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Skip link when focused */
+.skip-link:focus {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--forest);
+  color: #fff;
+  border-radius: 0.25rem;
 }

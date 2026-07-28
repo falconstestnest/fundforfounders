@@ -52,10 +52,7 @@ export default function RootLayout({
       className={`${inter.variable} ${display.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ivory text-ink">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-forest focus:px-4 focus:py-2 focus:text-white"
-        >
+        <a href="#main" className="skip-link sr-only">
           Skip to content
         </a>
         <Header />
