@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { NetworkBackground } from "@/components/NetworkBackground";
 import { FadeIn } from "@/components/FadeIn";
-import { RegistrationForm } from "@/components/RegistrationForm";
+import RegistrationForm from "@/components/forms/RegistrationForm";
 import { HOMEPAGE_CARDS } from "@/lib/stakeholders";
 import { siteConfig } from "@/lib/config";
 
@@ -235,7 +235,7 @@ export default function HomePage() {
           </div>
           <div className="lg:col-span-7">
             <FadeIn delay={80}>
-              <RegistrationForm />
+              <RegistrationForm onSuccessRedirect />
             </FadeIn>
           </div>
         </div>

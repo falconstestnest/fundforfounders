@@ -1,7 +1,9 @@
 import { Resend } from "resend";
 import { siteConfig } from "./config";
-import type { RegistrationInput } from "./validation";
-import { HIGH_PRIORITY_TYPES } from "./stakeholders";
+import {
+  HIGH_PRIORITY_TYPES,
+  type StakeholderType,
+} from "./registration-schema";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -27,7 +29,16 @@ function rows(data: Record<string, string | undefined | boolean | null>) {
     .join("");
 }
 
-export async function sendRegistrationEmails(data: RegistrationInput) {
+export type RegistrationPayload = Record<string, unknown> & {
+  fullName: string;
+  email: string;
+  mobile: string;
+  country: string;
+  city: string;
+  stakeholderType: StakeholderType;
+};
+
+export async function sendRegistrationEmails(data: RegistrationPayload) {
   const resend = getResend();
   if (!resend) {
     console.warn("RESEND_API_KEY not set — skipping email delivery");
@@ -37,56 +48,24 @@ export async function sendRegistrationEmails(data: RegistrationInput) {
   const isHighPriority = HIGH_PRIORITY_TYPES.includes(data.stakeholderType);
   const subjectPrefix = isHighPriority ? "[Priority] " : "";
 
-  const detailMap: Record<string, string | boolean | undefined> = {
-    Name: data.fullName,
-    Email: data.email,
-    Phone: data.phone,
-    Country: data.country,
-    City: data.city,
-    Organisation: data.organisation,
-    Designation: data.designation,
-    LinkedIn: data.linkedin,
-    "Stakeholder type": data.stakeholderType,
-    "How heard": data.howHeard,
-    Message: data.message,
-    "Startup name": data.startupName,
-    Website: data.websiteUrl,
-    Sector: data.sector,
-    Stage: data.stage,
-    "Year founded": data.yearFounded,
-    "Team size": data.teamSize,
-    "Business summary": data.businessSummary,
-    Problem: data.problem,
-    Traction: data.traction,
-    "Revenue range": data.revenueRange,
-    "Funding required": data.fundingRequired,
-    "Previous funding": data.previousFunding,
-    "Pitch competition": data.pitchCompetition,
-    "Podcast interest": data.podcastInterest,
-    "Cheque size": data.chequeSize,
-    "Preferred stage": data.preferredStage,
-    "Preferred sectors": data.preferredSectors,
-    "Preferred geography": data.preferredGeography,
-    "Past investments": data.pastInvestments,
-    "Pitch panels": data.pitchPanels,
-    "Co-investment": data.coInvestment,
-    "Organisation type": data.organisationType,
-    "Commitment range": data.commitmentRange,
-    "Emerging manager": data.emergingManager,
-    "Fund name": data.fundName,
-    "Fund size": data.fundSize,
-    "Fund vintage": data.fundVintage,
-    "Deal flow": data.dealFlow,
-    Institution: data.institution,
-    Department: data.department,
-    Jurisdiction: data.jurisdiction,
-    "Area of interest": data.areaOfInterest,
-    "Partnership interest": data.partnershipInterest,
-    Mandate: data.mandate,
-    "Min commitment": data.minCommitment,
-    "Max commitment": data.maxCommitment,
-    Source: data.source,
-  };
+  const detailMap: Record<string, string | boolean | undefined> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (
+      key === "consent" ||
+      key === "websiteHoneypot" ||
+      key === "pitchDeck" ||
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
+      continue;
+    }
+    if (typeof value === "boolean" || typeof value === "string") {
+      detailMap[key] = value;
+    } else if (typeof value === "number") {
+      detailMap[key] = String(value);
+    }
+  }
 
   const internalHtml = `
     <div style="font-family:Georgia,serif;max-width:560px;color:#111311;">
@@ -96,10 +75,11 @@ export async function sendRegistrationEmails(data: RegistrationInput) {
     </div>
   `;
 
+  const firstName = data.fullName.split(" ")[0] || data.fullName;
   const userHtml = `
     <div style="font-family:Georgia,serif;max-width:560px;color:#111311;line-height:1.6;">
       <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#506B5B;">FundForFounders</p>
-      <h1 style="font-size:24px;font-weight:500;line-height:1.2;">Thank you, ${escapeHtml(data.fullName.split(" ")[0] || data.fullName)}.</h1>
+      <h1 style="font-size:24px;font-weight:500;line-height:1.2;">Thank you, ${escapeHtml(firstName)}.</h1>
       <p>We received your registration as <strong>${escapeHtml(data.stakeholderType)}</strong>.</p>
       <p>We will share relevant launch updates, applications and partnership opportunities as FundForFounders takes shape.</p>
       <p style="color:#73766F;font-size:14px;">This is not an offer to invest or a commitment of capital. Submission does not guarantee selection, partnership or investment.</p>
