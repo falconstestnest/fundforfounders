@@ -78,7 +78,7 @@ export default function InvestorsPage() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {reasons.map((r, i) => (
               <FadeIn key={r.title} delay={i * 40}>
-                <article className="h-full rounded-2xl border border-border bg-paper p-6">
+                <article className="h-full rounded border border-border bg-paper p-6">
                   <h3 className="font-display text-xl text-ink">{r.title}</h3>
                   <p className="mt-3 text-sm text-stone">{r.body}</p>
                 </article>

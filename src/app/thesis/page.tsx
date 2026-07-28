@@ -109,7 +109,7 @@ export default function ThesisPage() {
                 {sectors.map((s) => (
                   <li
                     key={s}
-                    className="rounded-full border border-border bg-paper px-3.5 py-1.5 text-sm text-ink"
+                    className="rounded border border-border bg-paper px-3.5 py-1.5 text-sm text-ink"
                   >
                     {s}
                   </li>
@@ -135,7 +135,7 @@ export default function ThesisPage() {
               {ambitionExamples.map((name) => (
                 <li
                   key={name}
-                  className="rounded-full border border-border bg-ivory px-3.5 py-1.5 text-sm text-ink"
+                  className="rounded border border-border bg-ivory px-3.5 py-1.5 text-sm text-ink"
                 >
                   {name}
                 </li>
@@ -161,9 +161,9 @@ export default function ThesisPage() {
               {lookFor.map((item, i) => (
                 <li
                   key={item}
-                  className="rounded-2xl border border-border bg-paper p-5"
+                  className="rounded border border-border bg-paper p-5"
                 >
-                  <span className="font-mono text-xs text-gold">
+                  <span className="text-xs font-semibold tabular-nums text-forest">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="mt-2 font-medium text-ink">{item}</p>
@@ -174,13 +174,16 @@ export default function ThesisPage() {
         </div>
       </section>
 
-      <section className="section-pad border-t border-border bg-forest text-ivory">
+      <section className="section-pad border-t border-border bg-ink text-ivory">
         <div className="container-site grid gap-12 lg:grid-cols-2">
           <FadeIn>
-            <h2 className="font-display text-3xl tracking-tight md:text-4xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-forest">
+              Philosophy
+            </p>
+            <h2 className="font-display mt-4 text-3xl tracking-tight text-white md:text-4xl">
               Clear before the cheque
             </h2>
-            <p className="mt-5 text-lg text-ivory/75">
+            <p className="mt-5 text-lg text-white/60">
               We expect open discussion before any investment is signed — so
               alignment is real, not assumed.
             </p>
@@ -190,7 +193,7 @@ export default function ThesisPage() {
               {clearTopics.map((t) => (
                 <li
                   key={t}
-                  className="rounded-xl border border-ivory/15 bg-ivory/5 px-4 py-3 text-sm"
+                  className="border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/85"
                 >
                   {t}
                 </li>
@@ -240,7 +243,7 @@ export default function ThesisPage() {
               {digitalTopics.map((t) => (
                 <li
                   key={t}
-                  className="rounded-2xl border border-border bg-ivory px-4 py-4 text-sm text-ink"
+                  className="rounded border border-border bg-ivory px-4 py-4 text-sm text-ink"
                 >
                   {t}
                 </li>
@@ -253,8 +256,8 @@ export default function ThesisPage() {
               not a live product claim.
             </p>
 
-            <div className="mt-10 max-w-2xl rounded-2xl border border-border bg-paper p-6 md:p-8">
-              <p className="font-mono text-xs uppercase tracking-wider text-moss">
+            <div className="mt-10 max-w-2xl rounded border border-border bg-paper p-6 md:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-forest">
                 Official reference
               </p>
               <h3 className="font-display mt-2 text-2xl tracking-tight text-ink">

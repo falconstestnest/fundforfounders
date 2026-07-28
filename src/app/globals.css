@@ -1,17 +1,23 @@
 @import "tailwindcss";
 
+/* Sequoia-inspired institutional system for FundForFounders
+   Cool off-white, near-black type, signature green accent.
+   Inspired by sequoiacap.com — original brand, not a clone. */
+
 :root {
-  --ivory: #f7f5ef;
-  --paper: #fefdf9;
-  --ink: #111311;
-  --forest: #123c31;
-  --moss: #506b5b;
-  --gold: #b3935f;
-  --stone: #73766f;
-  --border: #e3e0d7;
-  --success: #2e6b4b;
-  --warning: #a16a22;
-  --error: #a4443e;
+  --ivory: #f3f3f2;
+  --paper: #ffffff;
+  --ink: #1b1916;
+  --forest: #00a071;
+  --moss: #007354;
+  --gold: #00a071;
+  --stone: #928c86;
+  --border: #e4e3e0;
+  --success: #007354;
+  --warning: #b06300;
+  --error: #ba080d;
+  --black: #1b1916;
+  --muted: #a8a39e;
   --background: var(--ivory);
   --foreground: var(--ink);
 }
@@ -30,6 +36,8 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-black: var(--black);
+  --color-muted: var(--muted);
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
@@ -58,90 +66,64 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--forest) 18%, transparent);
+  background: color-mix(in srgb, var(--forest) 22%, transparent);
   color: var(--ink);
 }
 
+/* Display = tight institutional sans (Sequoia-like statements) */
 .font-display {
-  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.035em;
 }
 
 .container-site {
   width: 100%;
-  max-width: 72rem;
+  max-width: 78rem;
   margin-inline: auto;
   padding-inline: 1.25rem;
 }
 
 @media (min-width: 768px) {
   .container-site {
-    padding-inline: 2rem;
+    padding-inline: 2.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .container-site {
-    padding-inline: 3rem;
+    padding-inline: 3.5rem;
   }
 }
 
 .prose-measure {
-  max-width: 42rem;
+  max-width: 38rem;
 }
 
 .text-balance {
   text-wrap: balance;
 }
 
-/* Subtle network animation for hero */
-@keyframes float-node {
-  0%,
-  100% {
-    transform: translate(0, 0);
-    opacity: 0.35;
-  }
-  50% {
-    transform: translate(6px, -10px);
-    opacity: 0.7;
-  }
-}
-
-@keyframes draw-line {
-  0% {
-    stroke-dashoffset: 120;
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 0.45;
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0.2;
-  }
-}
-
-.network-node {
-  animation: float-node 16s ease-in-out infinite;
-}
-
-.network-node:nth-child(2n) {
-  animation-duration: 20s;
-  animation-delay: -4s;
-}
-
-.network-node:nth-child(3n) {
-  animation-duration: 24s;
-  animation-delay: -8s;
-}
-
-.network-line {
-  stroke-dasharray: 120;
-  animation: draw-line 18s ease-in-out infinite;
+/* Hero ambient — minimal green wash, no particles */
+.hero-wash {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 85% 20%,
+      color-mix(in srgb, var(--forest) 9%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 10% 90%,
+      color-mix(in srgb, var(--moss) 6%, transparent),
+      transparent 50%
+    ),
+    var(--ivory);
 }
 
 .focus-ring:focus-visible {
@@ -151,46 +133,46 @@ body {
 
 .card-lift {
   transition:
-    transform 0.35s ease,
-    border-color 0.35s ease,
-    box-shadow 0.35s ease;
+    border-color 0.25s ease,
+    background 0.25s ease;
 }
 
 .card-lift:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--forest) 25%, var(--border));
-  box-shadow: 0 12px 40px -24px rgb(18 60 49 / 0.35);
+  border-color: var(--ink);
+  background: var(--paper);
 }
 
 .card-lift:hover .card-arrow {
-  transform: translateX(5px);
+  transform: translateX(4px);
+  color: var(--forest);
 }
 
 .card-arrow {
-  transition: transform 0.3s ease;
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
   display: inline-block;
 }
 
+/* Sharp institutional buttons — not pills */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 3.1rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 9999px;
+  min-height: 2.85rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 0.25rem;
   background: var(--forest);
-  color: var(--ivory);
+  color: #fff;
   font-weight: 500;
-  font-size: 0.9375rem;
-  letter-spacing: 0.01em;
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  transition: background 0.2s ease;
 }
 
 .btn-primary:hover {
-  background: color-mix(in srgb, var(--forest) 88%, black);
+  background: var(--moss);
 }
 
 .btn-primary:disabled {
@@ -203,52 +185,78 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 3.1rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 9999px;
+  min-height: 2.85rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 0.25rem;
   border: 1px solid var(--ink);
   color: var(--ink);
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   background: transparent;
   transition:
     background 0.2s ease,
+    color 0.2s ease,
     border-color 0.2s ease;
 }
 
 .btn-secondary:hover {
-  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+.btn-ghost:hover {
+  color: var(--forest);
 }
 
 .link-arrow {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: var(--forest);
+  color: var(--ink);
   font-weight: 500;
   font-size: 0.9375rem;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.link-arrow:hover {
+  color: var(--forest);
 }
 
 .link-arrow:hover .card-arrow {
-  transform: translateX(5px);
+  transform: translateX(4px);
 }
 
 .input-field {
   width: 100%;
   min-height: 3rem;
-  border-radius: 0.75rem;
+  border-radius: 0.25rem;
   border: 1px solid var(--border);
   background: var(--paper);
   padding: 0.7rem 0.95rem;
   color: var(--ink);
   font-size: 1rem;
-  transition: border-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: var(--moss);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--moss) 18%, transparent);
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--forest) 16%, transparent);
 }
 
 .input-field[aria-invalid="true"] {
@@ -257,10 +265,11 @@ body {
 
 .label-field {
   display: block;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--ink);
   margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
 }
 
 .section-pad {
@@ -275,16 +284,42 @@ body {
 
 @media (min-width: 1024px) {
   .section-pad {
-    padding-block: 8rem;
+    padding-block: 7.5rem;
   }
 }
 
 .eyebrow {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--moss);
+  color: var(--forest);
+}
+
+/* Sequoia-style large statement */
+.headline-xl {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+.logo-mark {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.logo-mark span {
+  color: var(--forest);
 }
 
 .sr-only {

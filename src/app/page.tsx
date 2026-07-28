@@ -1,34 +1,32 @@
 import Link from "next/link";
-import { NetworkBackground } from "@/components/NetworkBackground";
 import { FadeIn } from "@/components/FadeIn";
 import RegistrationForm from "@/components/forms/RegistrationForm";
 import { HOMEPAGE_CARDS } from "@/lib/stakeholders";
 import { siteConfig } from "@/lib/config";
 
 const roadmap = [
-  "Podcast Launch",
-  "Founder Applications",
-  "Pitch Competitions",
-  "Investor Network",
-  "Fund Formation",
-  "Fund I",
+  { label: "Podcast Launch", note: "Stories from the network" },
+  { label: "Founder Applications", note: "Early pipeline open" },
+  { label: "Pitch Competitions", note: "Curated sessions" },
+  { label: "Investor Network", note: "Angels, LPs, VCs" },
+  { label: "Fund Formation", note: "Subject to structure" },
+  { label: "Fund I", note: "Long-term destination" },
 ];
 
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <section className="relative flex min-h-[88vh] items-center pt-20 lg:min-h-[92vh] lg:pt-24">
-        <NetworkBackground />
-        <div className="container-site relative z-10 py-16 md:py-24">
+      {/* Hero — Sequoia-scale statement */}
+      <section className="hero-wash relative flex min-h-[92vh] items-end pb-16 pt-28 md:min-h-[100svh] md:items-center md:pb-24 md:pt-24">
+        <div className="container-site relative z-10 w-full">
           <p className="eyebrow">Launching Soon</p>
-          <h1 className="font-display mt-5 max-w-4xl text-[2.75rem] leading-[1.05] tracking-tight text-ink sm:text-6xl md:text-7xl lg:text-[5.5rem] lg:leading-[0.98]">
-            Finding founders before the world sees their potential.
+          <h1 className="headline-xl mt-6 max-w-[15ch] text-[2.75rem] text-ink sm:text-6xl md:max-w-[18ch] md:text-7xl lg:text-[5.25rem] xl:text-[5.75rem]">
+            We help ambitious founders build enduring companies.
           </h1>
-          <p className="prose-measure mt-6 text-lg text-stone md:text-xl">
+          <p className="mt-8 max-w-xl text-base text-stone md:text-lg">
             {siteConfig.description}
           </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Link href="/join" className="btn-primary focus-ring">
               Join the Network
             </Link>
@@ -38,91 +36,122 @@ export default function HomePage() {
             >
               Apply as a Founder
             </Link>
+            <Link
+              href="/thesis"
+              className="link-arrow focus-ring sm:ml-2"
+            >
+              Our thesis <span className="card-arrow">→</span>
+            </Link>
           </div>
-          <Link
-            href="/thesis"
-            className="link-arrow focus-ring mt-8"
-          >
-            Read our investment thesis{" "}
-            <span className="card-arrow" aria-hidden>
-              →
-            </span>
-          </Link>
         </div>
       </section>
 
-      {/* Subtle positioning */}
-      <section className="section-pad border-t border-border">
-        <div className="container-site">
-          <FadeIn>
-            <div className="max-w-3xl">
-              <h2 className="font-display text-3xl leading-tight tracking-tight text-ink md:text-5xl">
-                Built for ideas that can redefine industries.
+      <hr className="rule" />
+
+      {/* Ethos strip */}
+      <section className="section-pad">
+        <div className="container-site grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-4">
+            <FadeIn>
+              <p className="eyebrow">What we believe</p>
+              <h2 className="font-display mt-4 text-3xl tracking-tight text-ink md:text-4xl">
+                Built for ideas that redefine industries.
               </h2>
-              <p className="prose-measure mt-6 text-lg text-stone">
+            </FadeIn>
+          </div>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <FadeIn delay={60}>
+              <p className="text-lg leading-relaxed text-stone md:text-xl">
                 Technology or otherwise, we are interested in businesses that
                 solve meaningful problems, challenge established markets and
                 improve how people live.
               </p>
-              <Link href="/thesis#what-we-look-for" className="link-arrow focus-ring mt-6">
+              <p className="mt-6 text-lg leading-relaxed text-ink md:text-xl">
+                Clear before the cheque. Committed after it.
+              </p>
+              <Link
+                href="/thesis#what-we-look-for"
+                className="link-arrow focus-ring mt-8"
+              >
                 What we look for <span className="card-arrow">→</span>
               </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Stakeholders */}
-      <section className="section-pad bg-paper/60">
-        <div className="container-site">
-          <FadeIn>
-            <h2 className="font-display max-w-3xl text-3xl leading-tight tracking-tight md:text-5xl">
-              A network designed for the people who build, back and enable
-              progress.
-            </h2>
-          </FadeIn>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {HOMEPAGE_CARDS.map((card, i) => (
-              <FadeIn key={card.title} delay={i * 60}>
-                <Link
-                  href={card.href}
-                  className="card-lift focus-ring group flex h-full flex-col rounded-2xl border border-border bg-paper p-6 md:p-8"
-                >
-                  <span className="font-mono text-xs text-gold">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mt-4 font-display text-2xl tracking-tight text-ink">
-                    {card.title}
-                  </h3>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-stone">
-                    {card.description}
-                  </p>
-                  <span className="link-arrow mt-6 text-sm">
-                    Continue <span className="card-arrow">→</span>
-                  </span>
-                </Link>
-              </FadeIn>
-            ))}
+            </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* Brand promise */}
+      <hr className="rule" />
+
+      {/* Network — list style like institutional story grids */}
       <section className="section-pad">
         <div className="container-site">
           <FadeIn>
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="font-display text-3xl leading-tight tracking-tight md:text-5xl">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div className="max-w-2xl">
+                <p className="eyebrow">The network</p>
+                <h2 className="font-display mt-4 text-3xl tracking-tight md:text-4xl lg:text-5xl">
+                  For the people who build, back and enable progress.
+                </h2>
+              </div>
+              <Link href="/join" className="btn-secondary focus-ring shrink-0">
+                Register interest
+              </Link>
+            </div>
+          </FadeIn>
+
+          <ul className="mt-14 divide-y divide-border border-y border-border">
+            {HOMEPAGE_CARDS.map((card, i) => (
+              <li key={card.title}>
+                <FadeIn delay={i * 40}>
+                  <Link
+                    href={card.href}
+                    className="group focus-ring flex flex-col gap-3 py-7 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10 sm:py-8"
+                  >
+                    <div className="flex items-baseline gap-4 sm:gap-6">
+                      <span className="w-8 shrink-0 text-xs font-semibold tabular-nums text-forest">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <h3 className="text-xl font-medium tracking-tight text-ink group-hover:text-forest md:text-2xl">
+                          {card.title}
+                        </h3>
+                        <p className="mt-1.5 max-w-xl text-sm text-stone md:text-base">
+                          {card.description}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="card-arrow ml-12 shrink-0 text-stone sm:ml-0">
+                      →
+                    </span>
+                  </Link>
+                </FadeIn>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Dark band — brand promise */}
+      <section className="bg-ink text-ivory">
+        <div className="container-site section-pad">
+          <FadeIn>
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-forest">
+                How we work
+              </p>
+              <h2 className="font-display mt-5 text-3xl leading-[1.1] tracking-tight text-white md:text-5xl">
                 {siteConfig.brandPromise}
               </h2>
-              <p className="mx-auto mt-6 max-w-xl text-lg text-stone">
-                We believe the difficult conversations should happen before an
-                investment is signed. Once aligned, we work to build
-                relationships that continue through growth, setbacks, future
-                rounds and exits.
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/60 md:text-lg">
+                Difficult conversations before an investment is signed. Once
+                aligned, relationships that continue through growth, setbacks,
+                future rounds and exits.
               </p>
-              <Link href="/founders" className="link-arrow focus-ring mt-8 justify-center">
-                How we work with founders <span className="card-arrow">→</span>
+              <Link
+                href="/founders"
+                className="btn-primary focus-ring mt-10"
+              >
+                How we work with founders
               </Link>
             </div>
           </FadeIn>
@@ -130,72 +159,77 @@ export default function HomePage() {
       </section>
 
       {/* Podcast */}
-      <section className="section-pad border-y border-border bg-forest text-ivory">
-        <div className="container-site grid items-center gap-12 lg:grid-cols-2">
-          <FadeIn>
-            <p className="eyebrow !text-gold">The Podcast</p>
-            <h2 className="font-display mt-4 text-3xl leading-tight tracking-tight md:text-5xl">
-              {siteConfig.podcastTitle}
-            </h2>
-            <p className="mt-5 max-w-lg text-lg text-ivory/75">
-              Conversations with investors, founders and ecosystem leaders about
-              the conviction, risk and human decisions behind every investment.
-            </p>
-            <p className="mt-4 font-mono text-xs uppercase tracking-wider text-gold/90">
-              First episodes launching soon
-            </p>
-            <Link
-              href="/podcast"
-              className="btn-primary focus-ring mt-8 !bg-ivory !text-forest hover:!bg-paper"
-            >
-              Get Podcast Updates
-            </Link>
-          </FadeIn>
-          <FadeIn delay={100}>
-            <div className="rounded-3xl border border-ivory/15 bg-ivory/5 p-8 md:p-10">
-              <div className="flex h-40 items-end gap-1.5 opacity-60">
-                {Array.from({ length: 28 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 rounded-sm bg-gold/70"
-                    style={{
-                      height: `${20 + ((i * 17) % 70)}%`,
-                    }}
-                  />
-                ))}
+      <section className="section-pad">
+        <div className="container-site grid items-start gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <FadeIn>
+              <p className="eyebrow">Podcast</p>
+              <h2 className="font-display mt-4 text-3xl tracking-tight md:text-4xl">
+                {siteConfig.podcastTitle}
+              </h2>
+              <p className="mt-5 text-stone md:text-lg">
+                Conversations with investors, founders and ecosystem leaders
+                about the conviction, risk and human decisions behind every
+                investment.
+              </p>
+              <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                First episodes launching soon
+              </p>
+              <Link href="/podcast" className="btn-primary focus-ring mt-8">
+                Get podcast updates
+              </Link>
+            </FadeIn>
+          </div>
+          <div className="lg:col-span-6 lg:col-start-7">
+            <FadeIn delay={80}>
+              <div className="border border-border bg-paper p-8 md:p-10">
+                <div className="flex h-36 items-end gap-1">
+                  {Array.from({ length: 36 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 bg-forest/20"
+                      style={{ height: `${18 + ((i * 19) % 78)}%` }}
+                    />
+                  ))}
+                </div>
+                <p className="mt-8 text-lg font-medium tracking-tight text-ink">
+                  Episode archive
+                </p>
+                <p className="mt-2 text-sm text-stone">
+                  Guest conversations will appear here as they publish.
+                </p>
               </div>
-              <p className="mt-6 font-display text-xl text-ivory/90">
-                Episode archive coming soon
-              </p>
-              <p className="mt-2 text-sm text-ivory/55">
-                Guest conversations will appear here as they publish.
-              </p>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </div>
         </div>
       </section>
 
-      {/* Roadmap */}
+      <hr className="rule" />
+
+      {/* Direction / roadmap */}
       <section className="section-pad">
         <div className="container-site">
           <FadeIn>
             <p className="eyebrow">Our direction</p>
-            <h2 className="font-display mt-3 text-3xl tracking-tight md:text-4xl">
+            <h2 className="font-display mt-3 max-w-2xl text-3xl tracking-tight md:text-4xl">
               Building toward a serious investment institution.
             </h2>
             <p className="prose-measure mt-4 text-stone">
-              Milestones indicate intent, not guaranteed dates or regulatory
+              Milestones indicate intent — not guaranteed dates or regulatory
               outcomes.
             </p>
           </FadeIn>
-          <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ol className="mt-12 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
             {roadmap.map((item, i) => (
-              <FadeIn key={item} delay={i * 40}>
-                <li className="rounded-2xl border border-border bg-paper px-5 py-5">
-                  <span className="font-mono text-xs text-gold">
+              <FadeIn key={item.label} delay={i * 35}>
+                <li className="flex h-full flex-col bg-ivory p-6 md:p-8">
+                  <span className="text-xs font-semibold tabular-nums text-forest">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p className="mt-2 font-medium text-ink">{item}</p>
+                  <p className="mt-4 text-lg font-medium tracking-tight text-ink">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-sm text-stone">{item.note}</p>
                 </li>
               </FadeIn>
             ))}
@@ -203,37 +237,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Digital-first — subtle */}
-      <section className="border-t border-border py-16 md:py-20">
+      <hr className="rule" />
+
+      {/* Digital-first */}
+      <section className="py-16 md:py-20">
         <div className="container-site">
           <FadeIn>
-            <p className="max-w-2xl text-lg text-stone md:text-xl">
-              Exploring transparent, digital-first infrastructure for the future
-              of private capital.
-            </p>
-            <Link href="/thesis#digital-first" className="link-arrow focus-ring mt-4">
-              Read our long-term vision <span className="card-arrow">→</span>
-            </Link>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <p className="max-w-2xl text-lg text-ink md:text-xl">
+                Exploring transparent, digital-first infrastructure for the
+                future of private capital.
+              </p>
+              <Link
+                href="/thesis#digital-first"
+                className="link-arrow focus-ring shrink-0"
+              >
+                Long-term vision <span className="card-arrow">→</span>
+              </Link>
+            </div>
           </FadeIn>
         </div>
       </section>
 
       {/* Registration */}
-      <section id="register" className="section-pad bg-paper/70">
+      <section id="register" className="border-t border-border bg-paper section-pad">
         <div className="container-site grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-4">
             <FadeIn>
-              <h2 className="font-display text-3xl leading-tight tracking-tight md:text-5xl">
+              <p className="eyebrow">Participate</p>
+              <h2 className="font-display mt-4 text-3xl tracking-tight md:text-4xl">
                 Be part of what comes next.
               </h2>
-              <p className="prose-measure mt-5 text-lg text-stone">
-                Tell us how you would like to participate, and we will share
+              <p className="prose-measure mt-5 text-stone">
+                Tell us how you would like to participate. We will share
                 relevant launch updates, applications and partnership
                 opportunities.
               </p>
             </FadeIn>
           </div>
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-8">
             <FadeIn delay={80}>
               <RegistrationForm onSuccessRedirect />
             </FadeIn>

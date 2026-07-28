@@ -9,7 +9,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -30,59 +30,53 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background,border-color,backdrop-filter] duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[background,border-color,box-shadow] duration-300 ${
         scrolled || open
-          ? "border-b border-border bg-ivory/90 backdrop-blur-md"
+          ? "border-b border-border bg-ivory/95 shadow-[0_1px_0_rgba(27,25,22,0.04)] backdrop-blur-md"
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="container-site flex h-16 items-center justify-between lg:h-20">
+      <div className="container-site flex h-14 items-center justify-between md:h-16">
         <Link
           href="/"
-          className="focus-ring font-display text-lg tracking-tight text-ink sm:text-xl"
+          className="logo-mark focus-ring text-[0.95rem] text-ink md:text-base"
           onClick={() => setOpen(false)}
         >
-          {siteConfig.name}
+          Fund<span>For</span>Founders
         </Link>
 
         <nav
-          className="hidden items-center gap-8 lg:flex"
+          className="hidden items-center gap-7 lg:flex"
           aria-label="Primary"
         >
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="focus-ring text-sm text-ink/80 transition-colors hover:text-ink"
+              className="focus-ring text-[0.8125rem] font-medium text-ink/70 transition-colors hover:text-ink"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/join"
-            className="btn-primary focus-ring hidden sm:inline-flex !min-h-11 !px-5 !text-sm"
-          >
-            Join the Network
-          </Link>
-          <Link
-            href="/join"
-            className="btn-primary focus-ring sm:hidden !min-h-10 !px-4 !text-sm"
+            className="btn-primary focus-ring hidden !min-h-9 !px-4 !text-[0.8125rem] sm:inline-flex"
           >
             Join
           </Link>
           <button
             type="button"
-            className="focus-ring flex h-11 w-11 items-center justify-center rounded-full border border-border bg-paper/80 lg:hidden"
+            className="focus-ring flex h-10 w-10 items-center justify-center rounded border border-border bg-paper lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((v) => !v)}
           >
             <span className="sr-only">Menu</span>
-            <div className="flex w-5 flex-col gap-1.5">
+            <div className="flex w-4 flex-col gap-1.5">
               <span
                 className={`h-px w-full bg-ink transition ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
               />
@@ -105,20 +99,30 @@ export function Header() {
           aria-modal="true"
           aria-label="Mobile navigation"
         >
-          <nav className="container-site flex max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto py-6">
+          <nav className="container-site flex max-h-[calc(100dvh-3.5rem)] flex-col gap-0.5 overflow-y-auto py-5">
             {mobileNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="focus-ring rounded-xl px-3 py-3 text-lg text-ink"
+                className="focus-ring rounded px-2 py-3 text-base font-medium text-ink"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/join"
+              className="btn-primary focus-ring mt-4 w-full"
+              onClick={() => setOpen(false)}
+            >
+              Join the Network
+            </Link>
           </nav>
         </div>
       )}
+
+      {/* silent brand for a11y name */}
+      <span className="sr-only">{siteConfig.name}</span>
     </header>
   );
 }

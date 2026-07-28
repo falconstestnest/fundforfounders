@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "FundForFounders",
-  tagline: "Finding founders before the world sees their potential.",
+  tagline: "We help ambitious founders build enduring companies.",
   brandPromise: "Clear before the cheque. Committed after it.",
   description:
-    "FundForFounders is building a founder-first investment network connecting ambitious founders with investors, institutions and global ecosystem partners.",
+    "A founder-first investment network connecting ambitious founders with investors, institutions and global ecosystem partners — from idea toward enduring companies.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://fundforfounders.com",
   email: process.env.CONTACT_EMAIL || "hello@fundforfounders.com",
   internalEmail:
@@ -31,16 +31,20 @@ export const siteConfig = {
 } as const;
 
 export const navLinks = [
+  { href: "/thesis", label: "Thesis" },
+  { href: "/podcast", label: "Podcast" },
+  { href: "/founders", label: "Founders" },
+  { href: "/investors", label: "Investors" },
+  { href: "/join", label: "Join" },
+] as const;
+
+export const mobileNavLinks = [
+  { href: "/", label: "Home" },
   { href: "/thesis", label: "Our Thesis" },
   { href: "/podcast", label: "Podcast" },
   { href: "/founders", label: "For Founders" },
   { href: "/investors", label: "For Investors" },
   { href: "/join", label: "Join the Network" },
-] as const;
-
-export const mobileNavLinks = [
-  { href: "/", label: "Home" },
-  ...navLinks,
   { href: "/contact", label: "Contact" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },

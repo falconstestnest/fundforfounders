@@ -170,7 +170,7 @@ export default function RegistrationForm({
                 key={type}
                 type="button"
                 onClick={() => setSelectedType(type)}
-                className="group rounded-2xl border border-border bg-paper px-5 py-4 text-left transition-all duration-200 hover:border-forest hover:bg-white focus-ring"
+                className="group rounded border border-border bg-paper px-5 py-4 text-left transition-all duration-200 hover:border-ink hover:bg-white focus-ring"
               >
                 <span className="block font-medium text-ink group-hover:text-forest">
                   {type}
@@ -182,7 +182,7 @@ export default function RegistrationForm({
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="relative space-y-8 rounded-3xl border border-border bg-paper p-6 sm:p-8 md:p-10"
+          className="relative space-y-8 rounded border border-border bg-paper p-6 sm:p-8 md:p-10"
           noValidate
         >
           {/* Honeypot */}
@@ -417,7 +417,7 @@ export default function RegistrationForm({
 }
 
 const inputClass =
-  "w-full px-4 py-3 rounded-xl border border-border bg-paper text-ink placeholder:text-stone/70 focus:outline-none focus:ring-2 focus:ring-forest/30 focus:border-forest transition input-field !min-h-0";
+  "w-full px-4 py-3 rounded border border-border bg-paper text-ink placeholder:text-stone/70 focus:outline-none focus:ring-2 focus:ring-forest/25 focus:border-forest transition input-field !min-h-0";
 
 function errMsg(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

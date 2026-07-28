@@ -45,7 +45,7 @@ export function ContactForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-5 rounded-3xl border border-border bg-paper p-6 sm:p-8"
+      className="space-y-5 rounded border border-border bg-paper p-6 sm:p-8"
       noValidate
     >
       <div className="absolute left-[-9999px]" aria-hidden="true">

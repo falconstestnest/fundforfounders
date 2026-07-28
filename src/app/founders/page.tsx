@@ -125,8 +125,8 @@ export default function FoundersPage() {
           <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {process.map((step, i) => (
               <FadeIn key={step.title} delay={i * 40}>
-                <li className="h-full rounded-2xl border border-border bg-paper p-6">
-                  <span className="font-mono text-xs text-gold">
+                <li className="h-full rounded border border-border bg-paper p-6">
+                  <span className="text-xs font-semibold tabular-nums text-forest">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h3 className="mt-3 font-display text-xl">{step.title}</h3>
@@ -138,21 +138,21 @@ export default function FoundersPage() {
         </div>
       </section>
 
-      <section className="section-pad border-t border-border bg-forest text-ivory">
+      <section className="section-pad border-t border-border bg-ink text-ivory">
         <div className="container-site max-w-3xl">
           <FadeIn>
-            <h2 className="font-display text-3xl tracking-tight">
+            <h2 className="font-display text-3xl tracking-tight text-white">
               Clear before the cheque. Committed after it.
             </h2>
-            <p className="mt-5 text-lg text-ivory/75">
+            <p className="mt-5 text-lg text-white/60">
               Difficult conversations on valuation, governance, ownership and
-              expectations should happen before any investment is signed. Once
+              expectations should happen before an investment is signed. Once
               aligned, our ambition is to remain useful partners through growth,
               setbacks and future rounds.
             </p>
             <Link
               href="/join?type=Founder"
-              className="btn-primary focus-ring mt-8 !bg-ivory !text-forest"
+              className="btn-primary focus-ring mt-8"
             >
               Apply as a Founder
             </Link>
@@ -167,7 +167,7 @@ export default function FoundersPage() {
             {faqs.map((f) => (
               <details
                 key={f.q}
-                className="group rounded-2xl border border-border bg-paper px-5 py-4"
+                className="group rounded border border-border bg-paper px-5 py-4"
               >
                 <summary className="cursor-pointer list-none font-medium text-ink marker:content-none">
                   <span className="flex items-center justify-between gap-4">
