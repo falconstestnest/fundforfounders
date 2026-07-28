@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { isAdminRequest } from "@/lib/admin-auth";
-import { dbListLeads, isDatabaseConfigured } from "@/lib/db";
-import { isLeadsStorageConfigured } from "@/lib/leads";
-import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase";
+import { requireActorFromRequest } from "@/lib/crm/auth";
+import { searchLeads } from "@/lib/crm/leads-query";
 import type { LeadRow } from "@/lib/supabase";
 
 export const runtime = "nodejs";
@@ -12,70 +10,29 @@ function csvEscape(val: unknown): string {
   return `"${s.replace(/"/g, '""')}"`;
 }
 
-async function fetchAll(filters: {
-  type?: string | null;
-  status?: string | null;
-  priority?: string | null;
-  q?: string | null;
-}): Promise<LeadRow[]> {
-  const f = {
-    type: filters.type || undefined,
-    status: filters.status || undefined,
-    priority: filters.priority || undefined,
-    q: filters.q || undefined,
-    limit: 5000,
-  };
-
-  if (isDatabaseConfigured()) {
-    return dbListLeads(f);
-  }
-
-  if (isSupabaseConfigured()) {
-    let query = getSupabaseAdmin()
-      .from("leads")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(5000);
-
-    if (f.type) query = query.eq("stakeholder_type", f.type);
-    if (f.status) query = query.eq("status", f.status);
-    if (f.priority) query = query.eq("priority", f.priority);
-    if (f.q) {
-      query = query.or(
-        `full_name.ilike.%${f.q}%,email.ilike.%${f.q}%,organisation.ilike.%${f.q}%`,
-      );
-    }
-
-    const { data, error } = await query;
-    if (error || !data) throw new Error(error?.message || "Export failed");
-    return data as LeadRow[];
-  }
-
-  throw new Error("No database configured");
-}
-
 export async function GET(req: NextRequest) {
-  if (!isAdminRequest(req)) {
+  try {
+    requireActorFromRequest(req, "leads.export");
+  } catch {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (!isLeadsStorageConfigured()) {
-    return NextResponse.json(
-      { error: "Database is not configured" },
-      { status: 503 },
-    );
   }
 
   const { searchParams } = new URL(req.url);
 
   let data: LeadRow[];
   try {
-    data = await fetchAll({
-      type: searchParams.get("type"),
-      status: searchParams.get("status"),
-      priority: searchParams.get("priority"),
-      q: searchParams.get("q"),
+    const result = await searchLeads({
+      type: searchParams.get("type") || undefined,
+      status: searchParams.get("status") || undefined,
+      priority: searchParams.get("priority") || undefined,
+      q: searchParams.get("q") || undefined,
+      view: searchParams.get("view") || undefined,
+      unassigned: searchParams.get("unassigned") === "1",
+      overdue: searchParams.get("overdue") === "1",
+      page: 1,
+      pageSize: 5000,
     });
+    data = result.leads;
   } catch (err) {
     console.error("Export failed", err);
     return NextResponse.json({ error: "Export failed" }, { status: 500 });

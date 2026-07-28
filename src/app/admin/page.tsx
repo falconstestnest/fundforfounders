@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { isAdminAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
+import { getSessionActor, isAdminConfigured } from "@/lib/crm/auth";
 import { fetchDashboardStats } from "@/lib/admin-data";
 import { isLeadsStorageConfigured } from "@/lib/leads";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -31,7 +31,7 @@ export default async function AdminOverviewPage() {
     );
   }
 
-  if (!(await isAdminAuthenticated())) {
+  if (!(await getSessionActor())) {
     redirect("/admin/login");
   }
 

@@ -41,6 +41,11 @@ export type LeadRow = {
   pitch_deck_filename: string | null;
   created_at: string;
   updated_at: string;
+  pipeline_order?: number;
+  follow_up_at?: string | null;
+  last_activity_at?: string | null;
+  website?: string | null;
+  startup_name?: string | null;
 };
 
 let adminClient: SupabaseClient | null = null;

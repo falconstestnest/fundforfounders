@@ -42,11 +42,22 @@ export type LeadInsert = {
 
 export async function dbInsertLead(row: LeadInsert): Promise<LeadRow> {
   const db = getSql();
+  const startup =
+    typeof row.details?.startupName === "string"
+      ? row.details.startupName
+      : null;
+  const website =
+    typeof row.details?.website === "string"
+      ? row.details.website
+      : typeof row.details?.websiteUrl === "string"
+        ? row.details.websiteUrl
+        : null;
   const result = await db`
     INSERT INTO leads (
       full_name, email, mobile, country, city, organisation, designation,
       linkedin, stakeholder_type, how_heard, notes, consent, consent_at,
-      consent_version, details, pitch_deck_filename, status, priority, source
+      consent_version, details, pitch_deck_filename, status, priority, source,
+      last_activity_at, startup_name, website, pipeline_order
     ) VALUES (
       ${row.full_name},
       ${row.email},
@@ -66,7 +77,11 @@ export async function dbInsertLead(row: LeadInsert): Promise<LeadRow> {
       ${row.pitch_deck_filename},
       ${row.status},
       ${row.priority},
-      ${row.source}
+      ${row.source},
+      now(),
+      ${startup},
+      ${website},
+      ${0}
     )
     RETURNING *
   `;

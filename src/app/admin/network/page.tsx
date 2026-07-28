@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { isAdminAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
+import { getSessionActor, isAdminConfigured } from "@/lib/crm/auth";
 import { fetchDashboardStats, fetchLeads } from "@/lib/admin-data";
 import { isLeadsStorageConfigured } from "@/lib/leads";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -26,7 +26,7 @@ const FOUNDERS = ["Founder", "Startup Team Member"];
 
 export default async function NetworkPage() {
   if (!isAdminConfigured()) redirect("/admin/login");
-  if (!(await isAdminAuthenticated())) redirect("/admin/login");
+  if (!(await getSessionActor())) redirect("/admin/login");
 
   if (!isLeadsStorageConfigured()) {
     return (

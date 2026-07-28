@@ -30,6 +30,18 @@ const NAV = [
     icon: "◎",
     match: (p: string) => p.startsWith("/admin/network"),
   },
+  {
+    href: "/admin/users",
+    label: "Users",
+    icon: "○",
+    match: (p: string) => p.startsWith("/admin/users"),
+  },
+  {
+    href: "/admin/audit",
+    label: "Audit",
+    icon: "≡",
+    match: (p: string) => p.startsWith("/admin/audit"),
+  },
 ] as const;
 
 export function AdminShell({
