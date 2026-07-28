@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 /* Sequoia-inspired institutional system for FundForFounders
-   Cool off-white, near-black type, signature green accent.
-   Inspired by sequoiacap.com — original brand, not a clone. */
+   Cool off-white, near-black type, signature green accent. */
 
 :root {
   --ivory: #f3f3f2;
@@ -20,6 +19,14 @@
   --muted: #a8a39e;
   --background: var(--ivory);
   --foreground: var(--ink);
+
+  /* Motion tokens — tactile, never elastic */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 180ms;
+  --duration: 220ms;
+  --duration-slow: 280ms;
+  --lift: 2px;
 }
 
 @theme inline {
@@ -58,6 +65,15 @@ html {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .network-row,
+  .roadmap-item,
+  .stakeholder-type-btn {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
@@ -76,7 +92,7 @@ body {
   color: var(--ink);
 }
 
-/* Display = tight institutional sans (Sequoia-like statements) */
+/* Display = tight institutional sans */
 .font-display {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
   font-weight: 500;
@@ -110,7 +126,7 @@ body {
   text-wrap: balance;
 }
 
-/* Hero ambient — minimal green wash, no particles */
+/* Hero ambient — static wash only */
 .hero-wash {
   background:
     radial-gradient(
@@ -126,35 +142,60 @@ body {
     var(--ivory);
 }
 
+/* ——— Focus ——— */
+.focus-ring {
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
 .focus-ring:focus-visible {
   outline: 2px solid var(--forest);
   outline-offset: 3px;
 }
 
-.card-lift {
-  transition:
-    border-color 0.25s ease,
-    background 0.25s ease;
+.focus-ring:focus:not(:focus-visible) {
+  outline: none;
 }
 
-.card-lift:hover {
-  border-color: var(--ink);
-  background: var(--paper);
+/* ——— Navigation links ——— */
+.nav-link {
+  position: relative;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
-.card-lift:hover .card-arrow {
-  transform: translateX(4px);
-  color: var(--forest);
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: var(--forest);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration) var(--ease-out);
 }
 
-.card-arrow {
-  transition:
-    transform 0.25s ease,
-    color 0.25s ease;
-  display: inline-block;
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--ink);
 }
 
-/* Sharp institutional buttons — not pills */
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.footer-link {
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: #fff;
+}
+
+/* ——— Buttons (tactile) ——— */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -168,16 +209,35 @@ body {
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: -0.01em;
-  transition: background 0.2s ease;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
 }
 
 .btn-primary:hover {
   background: var(--moss);
+  box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--moss) 45%, transparent);
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: none;
 }
 
 .btn-primary:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-primary.is-loading {
+  cursor: wait;
+  pointer-events: none;
 }
 
 .btn-secondary {
@@ -194,14 +254,20 @@ body {
   font-size: 0.875rem;
   background: transparent;
   transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .btn-secondary:hover {
   background: var(--ink);
   color: var(--ivory);
+}
+
+.btn-secondary:active {
+  transform: translateY(1px) scale(0.985);
 }
 
 .btn-ghost {
@@ -214,12 +280,14 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
   text-decoration-thickness: 1px;
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .btn-ghost:hover {
   color: var(--forest);
 }
 
+/* Text link with arrow */
 .link-arrow {
   display: inline-flex;
   align-items: center;
@@ -229,16 +297,213 @@ body {
   font-size: 0.9375rem;
   border-bottom: 1px solid currentColor;
   padding-bottom: 1px;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    gap var(--duration) var(--ease-out);
 }
 
-.link-arrow:hover {
+.link-arrow:hover,
+.link-arrow:focus-visible {
   color: var(--forest);
+  border-color: var(--forest);
+  gap: 0.55rem;
 }
 
-.link-arrow:hover .card-arrow {
+.link-arrow:hover .card-arrow,
+.link-arrow:focus-visible .card-arrow {
   transform: translateX(4px);
 }
 
+.card-arrow {
+  display: inline-block;
+  transition: transform var(--duration) var(--ease-out);
+}
+
+/* ——— Cards ——— */
+.card-lift {
+  transition:
+    border-color var(--duration) var(--ease-out),
+    background var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out);
+}
+
+.card-lift:hover {
+  border-color: color-mix(in srgb, var(--ink) 35%, var(--border));
+  background: var(--paper);
+  transform: translateY(calc(var(--lift) * -1));
+  box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+.card-lift:hover .card-arrow {
+  transform: translateX(4px);
+  color: var(--forest);
+}
+
+.card-lift:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Network list rows (homepage stakeholders) */
+.network-row {
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    padding-left var(--duration) var(--ease-out);
+}
+
+.network-row:hover,
+.network-row:focus-visible {
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+}
+
+.network-row:hover .network-row-title,
+.network-row:focus-visible .network-row-title {
+  color: var(--forest);
+}
+
+.network-row-title {
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.network-row:hover .card-arrow,
+.network-row:focus-visible .card-arrow {
+  transform: translateX(5px);
+  color: var(--forest);
+}
+
+/* Stakeholder type picker buttons */
+.stakeholder-type-btn {
+  transition:
+    border-color var(--duration) var(--ease-out),
+    background var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.stakeholder-type-btn:hover {
+  border-color: var(--ink);
+  background: var(--paper);
+  box-shadow: 0 6px 16px -12px color-mix(in srgb, var(--ink) 35%, transparent);
+}
+
+.stakeholder-type-btn:active {
+  transform: scale(0.99);
+}
+
+.stakeholder-type-btn span {
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.stakeholder-type-btn:hover span {
+  color: var(--forest);
+}
+
+/* Roadmap / timeline items */
+.roadmap-item {
+  transition:
+    border-color var(--duration) var(--ease-out),
+    background var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out);
+}
+
+.roadmap-item:hover {
+  border-color: color-mix(in srgb, var(--forest) 35%, var(--border));
+  background: var(--paper);
+  transform: translateY(calc(var(--lift) * -1));
+  box-shadow: 0 6px 18px -14px color-mix(in srgb, var(--ink) 25%, transparent);
+}
+
+.roadmap-item:hover .roadmap-index {
+  color: var(--forest);
+}
+
+.roadmap-index {
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+/* Podcast / media cards */
+.podcast-card {
+  transition:
+    border-color var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out);
+}
+
+.podcast-card:hover {
+  border-color: color-mix(in srgb, var(--ink) 22%, var(--border));
+  transform: translateY(calc(var(--lift) * -1));
+  box-shadow: 0 10px 28px -18px color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.podcast-wave-bar {
+  transform-origin: bottom center;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.podcast-card:hover .podcast-wave-bar {
+  background: color-mix(in srgb, var(--forest) 45%, transparent);
+}
+
+/* Accordion (native details) */
+.accordion {
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: 0.5rem;
+  transition:
+    border-color var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out);
+}
+
+.accordion:hover {
+  border-color: color-mix(in srgb, var(--ink) 18%, var(--border));
+}
+
+.accordion[open] {
+  border-color: color-mix(in srgb, var(--forest) 30%, var(--border));
+  box-shadow: 0 4px 16px -12px color-mix(in srgb, var(--ink) 20%, transparent);
+}
+
+.accordion summary {
+  list-style: none;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion summary:hover {
+  color: var(--forest);
+}
+
+.accordion-icon {
+  display: inline-flex;
+  transition: transform var(--duration) var(--ease-out);
+}
+
+.accordion[open] .accordion-icon {
+  transform: rotate(45deg);
+}
+
+.accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-slow) var(--ease-out);
+}
+
+.accordion[open] .accordion-body {
+  grid-template-rows: 1fr;
+}
+
+.accordion-body-inner {
+  overflow: hidden;
+}
+
+/* Forms */
 .input-field {
   width: 100%;
   min-height: 3rem;
@@ -249,8 +514,13 @@ body {
   color: var(--ink);
   font-size: 1rem;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.input-field:hover:not(:disabled):not(:focus) {
+  border-color: color-mix(in srgb, var(--ink) 22%, var(--border));
 }
 
 .input-field:focus {
@@ -261,6 +531,7 @@ body {
 
 .input-field[aria-invalid="true"] {
   border-color: var(--error);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 12%, transparent);
 }
 
 .label-field {
@@ -272,6 +543,136 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Checkbox tactile */
+input[type="checkbox"] {
+  transition:
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+
+input[type="checkbox"]:active {
+  transform: scale(0.92);
+}
+
+/* Loading spinner */
+.btn-spinner {
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 1.5px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin var(--duration-slow) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success feedback */
+.success-check {
+  animation: success-pop var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes success-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.success-panel {
+  animation: success-fade var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes success-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form step transition (stakeholder selected) */
+.form-step-enter {
+  animation: form-step-in var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes form-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Alert / error appear */
+.alert-in {
+  animation: form-step-in var(--duration) var(--ease-out) both;
+}
+
+/* Header */
+.site-header {
+  transition:
+    background var(--duration) var(--ease-out),
+    border-color var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out);
+}
+
+.menu-line {
+  transition:
+    transform var(--duration) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.mobile-drawer {
+  animation: drawer-in var(--duration) var(--ease-out) both;
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo subtle hover */
+.logo-mark {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.logo-mark:hover {
+  opacity: 0.82;
+}
+
+.logo-mark span {
+  color: var(--forest);
+}
+
+/* Layout utilities */
 .section-pad {
   padding-block: 5rem;
 }
@@ -297,7 +698,6 @@ body {
   color: var(--forest);
 }
 
-/* Sequoia-style large statement */
 .headline-xl {
   font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
   font-weight: 500;
@@ -310,16 +710,6 @@ body {
   border: 0;
   border-top: 1px solid var(--border);
   margin: 0;
-}
-
-.logo-mark {
-  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
-
-.logo-mark span {
-  color: var(--forest);
 }
 
 .sr-only {

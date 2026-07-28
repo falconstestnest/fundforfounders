@@ -10,7 +10,23 @@ export default function ApplicationReceivedPage() {
   return (
     <div className="pt-20 lg:pt-24">
       <section className="section-pad">
-        <div className="container-site max-w-2xl text-center">
+        <div className="success-panel container-site max-w-2xl text-center">
+          <div className="success-check mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-forest">
+            <svg
+              className="h-7 w-7 text-ivory"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
           <p className="eyebrow">Founders</p>
           <h1 className="font-display mt-4 text-4xl tracking-tight md:text-5xl">
             Application received.

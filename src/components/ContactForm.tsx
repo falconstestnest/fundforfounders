@@ -119,16 +119,23 @@ export function ContactForm() {
         </span>
       </label>
       {error && (
-        <p role="alert" className="text-sm text-error">
+        <p role="alert" className="alert-in text-sm text-error">
           {error}
         </p>
       )}
       <button
         type="submit"
-        className="btn-primary focus-ring"
+        className={`btn-primary focus-ring ${status === "loading" ? "is-loading" : ""}`}
         disabled={status === "loading"}
       >
-        {status === "loading" ? "Sending…" : "Send message"}
+        {status === "loading" ? (
+          <>
+            <span className="btn-spinner" aria-hidden />
+            Sending…
+          </>
+        ) : (
+          "Send message"
+        )}
       </button>
     </form>
   );

@@ -44,7 +44,7 @@ export function Footer() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="focus-ring text-white/70 transition hover:text-white"
+                    className="footer-link focus-ring text-white/70"
                   >
                     {l.label}
                   </Link>
@@ -53,7 +53,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="focus-ring text-white/70 transition hover:text-white"
+                  className="footer-link focus-ring text-white/70"
                 >
                   Contact
                 </Link>
@@ -71,7 +71,7 @@ export function Footer() {
                   href={siteConfig.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="focus-ring text-white/70 transition hover:text-white"
+                  className="footer-link focus-ring text-white/70"
                 >
                   LinkedIn
                 </a>
@@ -81,7 +81,7 @@ export function Footer() {
                   href={siteConfig.social.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="focus-ring text-white/70 transition hover:text-white"
+                  className="footer-link focus-ring text-white/70"
                 >
                   YouTube
                 </a>
@@ -89,7 +89,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="focus-ring text-white/70 transition hover:text-white"
+                  className="footer-link focus-ring text-white/70"
                 >
                   {siteConfig.email}
                 </a>
@@ -97,7 +97,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/privacy"
-                  className="focus-ring text-white/70 transition hover:text-white"
+                  className="footer-link focus-ring text-white/70"
                 >
                   Privacy
                 </Link>
@@ -105,7 +105,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="focus-ring text-white/70 transition hover:text-white"
+                  className="footer-link focus-ring text-white/70"
                 >
                   Terms
                 </Link>

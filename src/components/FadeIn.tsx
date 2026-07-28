@@ -30,7 +30,7 @@ export function FadeIn({
           obs.disconnect();
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px -32px 0px" },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -42,8 +42,8 @@ export function FadeIn({
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(16px)",
-        transition: `opacity 0.9s ease ${delay}ms, transform 0.9s ease ${delay}ms`,
+        transform: visible ? "translateY(0)" : "translateY(8px)",
+        transition: `opacity 260ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 260ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
       }}
     >
       {children}

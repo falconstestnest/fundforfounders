@@ -165,19 +165,22 @@ export default function FoundersPage() {
           <h2 className="font-display text-3xl tracking-tight">Founder FAQ</h2>
           <div className="mt-8 space-y-4">
             {faqs.map((f) => (
-              <details
-                key={f.q}
-                className="group rounded border border-border bg-paper px-5 py-4"
-              >
-                <summary className="cursor-pointer list-none font-medium text-ink marker:content-none">
+              <details key={f.q} className="accordion px-5 py-4">
+                <summary className="focus-ring rounded font-medium text-ink">
                   <span className="flex items-center justify-between gap-4">
                     {f.q}
-                    <span className="text-moss transition group-open:rotate-45">
+                    <span className="accordion-icon text-moss" aria-hidden>
                       +
                     </span>
                   </span>
                 </summary>
-                <p className="mt-3 text-sm leading-relaxed text-stone">{f.a}</p>
+                <div className="accordion-body">
+                  <div className="accordion-body-inner">
+                    <p className="mt-3 pb-1 text-sm leading-relaxed text-stone">
+                      {f.a}
+                    </p>
+                  </div>
+                </div>
               </details>
             ))}
           </div>

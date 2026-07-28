@@ -113,8 +113,8 @@ export default function RegistrationForm({
 
   if (isSuccess) {
     return (
-      <div className="mx-auto max-w-xl px-6 py-16 text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-forest">
+      <div className="success-panel mx-auto max-w-xl px-6 py-16 text-center">
+        <div className="success-check mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-forest">
           <svg
             className="h-8 w-8 text-ivory"
             fill="none"
@@ -141,7 +141,7 @@ export default function RegistrationForm({
             setIsSuccess(false);
             setSelectedType(null);
           }}
-          className="text-forest underline underline-offset-4 hover:text-moss"
+          className="btn-ghost focus-ring text-forest"
         >
           Submit another response
         </button>
@@ -170,11 +170,9 @@ export default function RegistrationForm({
                 key={type}
                 type="button"
                 onClick={() => setSelectedType(type)}
-                className="group rounded border border-border bg-paper px-5 py-4 text-left transition-all duration-200 hover:border-ink hover:bg-white focus-ring"
+                className="stakeholder-type-btn focus-ring rounded border border-border bg-paper px-5 py-4 text-left"
               >
-                <span className="block font-medium text-ink group-hover:text-forest">
-                  {type}
-                </span>
+                <span className="block font-medium text-ink">{type}</span>
               </button>
             ))}
           </div>
@@ -182,7 +180,7 @@ export default function RegistrationForm({
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="relative space-y-8 rounded border border-border bg-paper p-6 sm:p-8 md:p-10"
+          className="form-step-enter relative space-y-8 rounded border border-border bg-paper p-6 sm:p-8 md:p-10"
           noValidate
         >
           {/* Honeypot */}
@@ -391,7 +389,7 @@ export default function RegistrationForm({
           {serverError && (
             <div
               role="alert"
-              className="rounded-xl border border-error/30 bg-error/5 px-4 py-3 text-sm text-error"
+              className="alert-in rounded-xl border border-error/30 bg-error/5 px-4 py-3 text-sm text-error"
             >
               {serverError}
             </div>
@@ -401,9 +399,16 @@ export default function RegistrationForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary focus-ring w-full md:w-auto"
+              className={`btn-primary focus-ring w-full md:w-auto ${isSubmitting ? "is-loading" : ""}`}
             >
-              {isSubmitting ? "Submitting…" : "Submit Registration"}
+              {isSubmitting ? (
+                <>
+                  <span className="btn-spinner" aria-hidden />
+                  Submitting…
+                </>
+              ) : (
+                "Submit Registration"
+              )}
             </button>
             <p className="mt-4 text-xs text-stone">
               Submission does not guarantee selection, partnership or

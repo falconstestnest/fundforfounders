@@ -30,7 +30,7 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background,border-color,box-shadow] duration-300 ${
+      className={`site-header fixed inset-x-0 top-0 z-50 ${
         scrolled || open
           ? "border-b border-border bg-ivory/95 shadow-[0_1px_0_rgba(27,25,22,0.04)] backdrop-blur-md"
           : "border-b border-transparent bg-transparent"
@@ -53,7 +53,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="focus-ring text-[0.8125rem] font-medium text-ink/70 transition-colors hover:text-ink"
+              className="nav-link focus-ring text-[0.8125rem] font-medium"
             >
               {link.label}
             </Link>
@@ -69,7 +69,7 @@ export function Header() {
           </Link>
           <button
             type="button"
-            className="focus-ring flex h-10 w-10 items-center justify-center rounded border border-border bg-paper lg:hidden"
+            className="focus-ring flex h-10 w-10 items-center justify-center rounded border border-border bg-paper transition-[border-color,background] duration-[180ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink/30"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -78,13 +78,13 @@ export function Header() {
             <span className="sr-only">Menu</span>
             <div className="flex w-4 flex-col gap-1.5">
               <span
-                className={`h-px w-full bg-ink transition ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
+                className={`menu-line h-px w-full bg-ink ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
               />
               <span
-                className={`h-px w-full bg-ink transition ${open ? "opacity-0" : ""}`}
+                className={`menu-line h-px w-full bg-ink ${open ? "opacity-0" : ""}`}
               />
               <span
-                className={`h-px w-full bg-ink transition ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`}
+                className={`menu-line h-px w-full bg-ink ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`}
               />
             </div>
           </button>
@@ -94,7 +94,7 @@ export function Header() {
       {open && (
         <div
           id="mobile-menu"
-          className="border-t border-border bg-ivory lg:hidden"
+          className="mobile-drawer border-t border-border bg-ivory lg:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
@@ -104,7 +104,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="focus-ring rounded px-2 py-3 text-base font-medium text-ink"
+                className="focus-ring rounded px-2 py-3 text-base font-medium text-ink transition-colors duration-[180ms] hover:bg-paper hover:text-forest"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -121,7 +121,6 @@ export function Header() {
         </div>
       )}
 
-      {/* silent brand for a11y name */}
       <span className="sr-only">{siteConfig.name}</span>
     </header>
   );

@@ -105,14 +105,14 @@ export default function HomePage() {
                 <FadeIn delay={i * 40}>
                   <Link
                     href={card.href}
-                    className="group focus-ring flex flex-col gap-3 py-7 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10 sm:py-8"
+                    className="network-row group focus-ring flex flex-col gap-3 rounded-sm py-7 sm:flex-row sm:items-baseline sm:justify-between sm:gap-10 sm:py-8"
                   >
                     <div className="flex items-baseline gap-4 sm:gap-6">
                       <span className="w-8 shrink-0 text-xs font-semibold tabular-nums text-forest">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <div>
-                        <h3 className="text-xl font-medium tracking-tight text-ink group-hover:text-forest md:text-2xl">
+                        <h3 className="network-row-title text-xl font-medium tracking-tight text-ink md:text-2xl">
                           {card.title}
                         </h3>
                         <p className="mt-1.5 max-w-xl text-sm text-stone md:text-base">
@@ -182,12 +182,12 @@ export default function HomePage() {
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
             <FadeIn delay={80}>
-              <div className="border border-border bg-paper p-8 md:p-10">
+              <div className="podcast-card border border-border bg-paper p-8 md:p-10">
                 <div className="flex h-36 items-end gap-1">
                   {Array.from({ length: 36 }).map((_, i) => (
                     <div
                       key={i}
-                      className="flex-1 bg-forest/20"
+                      className="podcast-wave-bar flex-1 bg-forest/20"
                       style={{ height: `${18 + ((i * 19) % 78)}%` }}
                     />
                   ))}
@@ -222,8 +222,8 @@ export default function HomePage() {
           <ol className="mt-12 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
             {roadmap.map((item, i) => (
               <FadeIn key={item.label} delay={i * 35}>
-                <li className="flex h-full flex-col bg-ivory p-6 md:p-8">
-                  <span className="text-xs font-semibold tabular-nums text-forest">
+                <li className="roadmap-item flex h-full flex-col border border-transparent bg-ivory p-6 md:p-8">
+                  <span className="roadmap-index text-xs font-semibold tabular-nums text-forest">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="mt-4 text-lg font-medium tracking-tight text-ink">

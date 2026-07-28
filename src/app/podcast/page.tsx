@@ -33,12 +33,12 @@ export default function PodcastPage() {
             </Link>
           </div>
           <FadeIn>
-            <div className="rounded border border-border bg-paper p-8 md:p-10">
+            <div className="podcast-card rounded border border-border bg-paper p-8 md:p-10">
               <div className="flex h-44 items-end gap-1">
                 {Array.from({ length: 32 }).map((_, i) => (
                   <div
                     key={i}
-                    className="flex-1 bg-forest/20"
+                    className="podcast-wave-bar flex-1 bg-forest/20"
                     style={{ height: `${18 + ((i * 23) % 75)}%` }}
                   />
                 ))}
@@ -77,7 +77,7 @@ export default function PodcastPage() {
           ].map((card) => (
             <article
               key={card.title}
-              className="rounded border border-border bg-paper p-6"
+              className="card-lift rounded border border-border bg-paper p-6"
             >
               <h2 className="font-display text-2xl">{card.title}</h2>
               <p className="mt-3 text-sm text-stone">{card.body}</p>
