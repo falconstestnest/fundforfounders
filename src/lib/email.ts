@@ -36,6 +36,14 @@ export type RegistrationPayload = Record<string, unknown> & {
   country: string;
   city: string;
   stakeholderType: StakeholderType;
+  organisation?: string;
+  designation?: string;
+  linkedin?: string;
+  howHeard?: string;
+  message?: string;
+  consent?: boolean;
+  pitchDeckFileName?: string;
+  pitchDeckFilename?: string;
 };
 
 export async function sendRegistrationEmails(data: RegistrationPayload) {

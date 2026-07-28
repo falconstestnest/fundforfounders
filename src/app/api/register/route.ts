@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sendRegistrationEmails } from "@/lib/email";
+import { insertLead } from "@/lib/leads";
 import { rateLimit } from "@/lib/rate-limit";
 import { parseRegistrationPayload } from "@/lib/registration-schema";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -41,6 +43,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Extra honeypot keys (legacy / bots)
+  if (body && typeof body === "object") {
+    const b = body as Record<string, unknown>;
+    if (
+      (typeof b.website_url === "string" && b.website_url.trim()) ||
+      (typeof b.honeypot === "string" && b.honeypot.trim())
+    ) {
+      return NextResponse.json({ ok: true, redirect: "/thank-you" });
+    }
+  }
+
   const parsed = parseRegistrationPayload(body);
 
   if (!parsed.success) {
@@ -58,6 +71,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, redirect: "/thank-you" });
   }
 
+  const raw = body as Record<string, unknown>;
+  const pitchDeckFileName =
+    typeof raw.pitchDeckFileName === "string"
+      ? raw.pitchDeckFileName
+      : typeof raw.pitchDeckFilename === "string"
+        ? raw.pitchDeckFilename
+        : undefined;
+
   const data = {
     ...parsed.data!,
     fullName: sanitiseText(parsed.data!.fullName),
@@ -65,7 +86,22 @@ export async function POST(req: NextRequest) {
     mobile: sanitiseText(parsed.data!.mobile),
     country: sanitiseText(parsed.data!.country),
     city: sanitiseText(parsed.data!.city),
+    pitchDeckFileName,
   };
+
+  // Persist to Supabase when configured
+  const insert = await insertLead(data);
+  if (!insert.ok && isSupabaseConfigured()) {
+    // Hard fail only when Supabase is configured but insert fails
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "We could not save your registration. Please try again in a moment.",
+      },
+      { status: 500 },
+    );
+  }
 
   try {
     await sendRegistrationEmails(data);
@@ -79,6 +115,7 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
+    id: insert.ok ? insert.lead.id : undefined,
     redirect: isFounder ? "/application-received" : "/thank-you",
   });
 }

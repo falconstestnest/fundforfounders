@@ -53,6 +53,26 @@ See `.env.example`.
 | `CONTACT_EMAIL` | Recommended | Public contact address |
 | `INTERNAL_NOTIFY_EMAIL` | Recommended | Team inbox for leads |
 | `NEXT_PUBLIC_SITE_URL` | Prod | Canonical site URL |
+| `NEXT_PUBLIC_SUPABASE_URL` | For DB | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | For DB | Server-only service role |
+| `ADMIN_SECRET` | For admin | Password for `/admin/leads` |
+
+## Supabase leads
+
+1. Create a Supabase project.
+2. Run `supabase/migrations/001_leads.sql` in the SQL Editor.
+3. Set env vars on Vercel (and locally in `.env.local`).
+4. Redeploy.
+
+Registrations insert into `public.leads` with type-specific fields in `details` (jsonb). High-priority types (LP, FoF, VC, Government, International Investor) get `priority = High`.
+
+### Admin
+
+- Login: `/admin/login` (uses `ADMIN_SECRET`)
+- Leads list + filters: `/admin/leads`
+- CSV export: `/api/admin/export` (requires admin cookie)
+
+Without Supabase env vars, the form still accepts submissions and sends Resend emails when configured.
 
 ## Deploy (Vercel)
 
