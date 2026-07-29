@@ -14,7 +14,9 @@ export const siteConfig = {
     process.env.RESEND_FROM_EMAIL || "FundForFounders <onboarding@resend.dev>",
   podcastTitle: "The Story Behind the Cheque",
   social: {
-    linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://www.linkedin.com",
+    linkedin:
+      process.env.NEXT_PUBLIC_LINKEDIN_URL ||
+      "https://www.linkedin.com/company/fund-for-founder",
     youtube: process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com",
   },
   /** Official RBI Digital Rupee (e₹ / CBDC) public information */

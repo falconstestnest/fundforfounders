@@ -15,6 +15,14 @@ export function Footer() {
             <p className="type-small mt-5 max-w-[16rem] !text-white/40">
               Founder-first investment network under formation.
             </p>
+            <a
+              href={siteConfig.social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link focus-ring mt-5 inline-block text-sm text-white/60"
+            >
+              LinkedIn
+            </a>
           </div>
 
           <div className="md:col-span-3">
